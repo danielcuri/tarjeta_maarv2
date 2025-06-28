@@ -1,0 +1,50 @@
+<!-- eslint-disable  -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Selección</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Listado de empresas</ion-label>
+      <ion-select
+        placeholder="Seleccione una empresa"
+        cancelText="Cancelar"
+        okText="Ok"
+        interface="action-sheet"
+        [(ngModel)]="enterprise_id"
+        (ionChange)="onChange($event)"
+      >
+        <ion-select-option [value]="item.id" *ngFor="let item of enterprises"
+          >{{ item.name }}</ion-select-option
+        >
+      </ion-select>
+    </ion-item>
+    <ion-item *ngIf="projects.length > 0">
+      <ion-label position="stacked">Listado de proyectos</ion-label>
+      <ion-select
+        placeholder="Seleccione un proyecto"
+        cancelText="Cancelar"
+        okText="Ok"
+        interface="action-sheet"
+        [(ngModel)]="project_id"
+      >
+        <ion-select-option [value]="item.id" *ngFor="let item of projects"
+          >{{ item.name }}</ion-select-option
+        >
+      </ion-select>
+    </ion-item>
+    <ion-button
+      expand="block"
+      (click)="saveCurrectSelection()"
+      [disabled]="enterprise_id == '' || project_id == '' || projects.length == 0"
+      >Elegir</ion-button
+    >
+  </ion-list>
+</ion-content>

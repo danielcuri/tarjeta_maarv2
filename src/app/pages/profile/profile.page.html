@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text="" defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="log-out"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="start">
+      <ion-button (click)="logout()">Cerrar sesión</ion-button>
+    </ion-fab-list>
+  </ion-fab>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <div class="icon_user">
+          <ion-icon src="/assets/imgs/user.svg"></ion-icon>
+        </div>
+      </ion-col>
+      <ion-col size="12">
+        <div class="title">
+          <span>{{ us.user.name }}</span>
+        </div>
+      </ion-col>
+      <ion-col size="12">
+        <div class="title">
+          <span>{{ us.user.email }}</span>
+        </div>
+      </ion-col>
+      <ion-col size="12" class="super_margin">
+        <ion-button
+          color="dark"
+          expand="full"
+          [routerLink]="['/change-password']"
+          routerDirection="forward"
+          shape="round"
+        >
+          Cambiar contraseña
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

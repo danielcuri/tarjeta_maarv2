@@ -35,3 +35,107 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+
+.alertFirst {
+    & .alert-wrapper {
+        & .alert-head {
+            text-align: center;
+            h2 {
+                color: #2b5571;
+                font-weight: 700;
+                font-size: 0.9rem;
+            }
+        }
+        & .alert-button-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            & button {
+                border-radius: 20px;
+                padding: 0.35rem 1.9rem;
+                color: #FFF;
+                margin-bottom: 1rem;
+                &:last-child {
+                    // margin-bottom: 0;
+                }
+
+                &.sky_blue {
+                    color: #FFF;
+                    background-image: linear-gradient( to bottom, #4c95c9, #2b5571);
+                }
+                &.sky_blue_transparent {
+                    color: #2b5571;
+                    border: 1px solid #2b5571;
+                }
+            }
+        }
+    }
+}
+
+ion-button {
+    &.gradient {
+        --background: none;
+        --box-shadow: none !important;
+        background: var(--ion-color-gradient) !important;
+        --background-activated: var(--ion-color-gradient) !important;
+        --background-focused: var(--ion-color-gradient) !important;
+        --background-hover: var(--ion-color-gradient) !important;
+        border-radius: 3rem;
+        --border-radius: 3rem;
+        --color: #FFF;
+        font-size: .875rem;
+        font-weight: 700;
+        height: 60px;
+        letter-spacing: 2px;
+        margin: 0;
+        --padding-left: 2.5rem;
+        --padding-right: 2.5rem;
+        text-transform: uppercase;
+        width: 100%;
+        outline: none !important;
+        --outline: none !important;
+    }
+}
+ion-button {
+    &.gradient-white {
+        background-color: transparent !important;
+        background: none !important;
+        --background: none !important;
+        --box-shadow: none !important;
+        --background-activated: var(--ion-color-gradient) !important;
+        --background-focused: var(--ion-color-gradient) !important;
+        --background-hover: var(--ion-color-gradient) !important;
+        border-radius: 3rem;
+        --border-radius: 3rem;
+        --color: #FFF;
+        font-size: .875rem;
+        font-weight: 700;
+        height: 60px;
+        letter-spacing: 2px;
+        margin: 0;
+        --padding-left: 2.5rem;
+        --padding-right: 2.5rem;
+        text-transform: uppercase;
+        width: 100%;
+        outline: none !important;
+        --outline: none !important;
+    }
+}
+
+* {
+    outline: none !important;
+    --outline: none !important;
+}
+
+ion-label {
+    white-space: normal !important;
+}
+.sc-ion-label-md-h .sc-ion-label-md-s {
+    white-space: normal !important;
+}
+
+.item.sc-ion-label-md-h, .item .sc-ion-label-md-h {
+    white-space: break-spaces !important;
+}

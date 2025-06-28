@@ -1,0 +1,26 @@
+ion-content {
+    & ion-fab {
+        &.corona_fab {
+            & ion-fab-button {
+                --border-radius: 10px;
+                width: 190px;
+                & ion-icon {
+                    color: #FFF;
+                    font-size: 1.5rem;
+                    margin-left: 0.5rem;
+                }
+            }
+        }
+        &.corona_fab_card {
+            & ion-fab-button {
+                --border-radius: 10px;
+                width: 137px;
+                & ion-icon {
+                    color: #FFF;
+                    font-size: 1.5rem;
+                    margin-left: 0.5rem;
+                }
+            }
+        }
+    }
+}

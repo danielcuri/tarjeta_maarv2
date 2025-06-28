@@ -1,0 +1,384 @@
+<!-- eslint-disable-->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button [routerLink]="'/tarjeta-main'">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title></ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <!-- <form action=""> -->
+  <ion-list>
+    <ion-item class="main_title" lines="none">
+      <div>
+        <div class="logo">
+          <img src="assets/imgs/logo_4.svg" />
+        </div>
+        <div class="message">
+          <span>ME ANTICIPO AL RIESGO<br />(MAAR)</span>
+        </div>
+      </div>
+    </ion-item>
+    <ion-item class="ion-margin-bottom ion-margin-top" *ngIf="enterprise">
+      <ion-label position="stacked">Empresa</ion-label>
+      <ion-input type="text" [value]="enterprise.name" disabled></ion-input>
+    </ion-item>
+    <ion-item class="ion-margin-bottom ion-margin-top" *ngIf="project">
+      <ion-label position="stacked">Proyecto</ion-label>
+      <ion-input type="text" [value]="project.name" disabled></ion-input>
+    </ion-item>
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="stacked">Nombre y apellidos</ion-label>
+      <ion-input
+        type="text"
+        [(ngModel)]="reportData.worker_fullname"
+        [disabled]="edit"
+      ></ion-input>
+    </ion-item>
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="stacked">DNI</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="reportData.worker_id_number"
+        [disabled]="edit"
+      ></ion-input>
+    </ion-item>
+    <!-- <ion-item class="ion-margin-bottom">
+              <ion-label position="stacked">Fecha y hora</ion-label>
+              <ion-datetime
+                  displayFormat="DD/MM/YYYY H:mm"
+                  [min]="minDate"
+                  [max]="maxDate"
+                  doneText="Ok"
+                  cancelText="Cancelar"
+                  [(ngModel)]="reportData.completed"
+                  [disabled]="edit"
+              >
+              </ion-datetime>
+          </ion-item> -->
+    <ion-item class="ion-margin-bottom item_html parent-proposed_date">
+      <ion-label position="stacked">Fecha y hora</ion-label>
+      <ion-datetime-button datetime="datetime"></ion-datetime-button>
+    </ion-item>
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime
+          id="datetime"
+          displayFormat="DD/MM/YYYY H:mm"
+          [min]="minDate"
+          [max]="maxDate"
+          doneText="Ok"
+          cancelText="Cancelar"
+          [(ngModel)]="reportData.completed"
+          [disabled]="edit"
+        ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="stacked">Área de Trabajo</ion-label>
+      <ion-input
+        type="text"
+        [(ngModel)]="reportData.area"
+        [disabled]="edit"
+      ></ion-input>
+    </ion-item>
+    <ion-list>
+      <!-- Reemplaza la sección de disciplinas con esto -->
+      <ion-list>
+        <ion-item>
+          <ion-label position="stacked">Disciplina</ion-label>
+          <ion-select
+            placeholder="Seleccione una disciplina"
+            cancelText="Cancelar"
+            okText="Ok"
+            interface="action-sheet"
+            [(ngModel)]="disciplines_model[0]"
+            [disabled]="edit"
+          >
+            <ion-select-option
+              [value]="discipline.id"
+              *ngFor="let discipline of rs.disciplines"
+              >{{ discipline.name }}</ion-select-option
+            >
+          </ion-select>
+        </ion-item>
+      </ion-list>
+      <ion-item lines="none">
+        <ion-label><strong>Estado</strong></ion-label>
+      </ion-item>
+      <ion-radio-group [(ngModel)]="reportData.type">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6">
+              <ion-item lines="none">
+                <ion-label>Seguro</ion-label>
+                <ion-radio
+                  slot="start"
+                  value="Seguro"
+                  mode="md"
+                  name="type"
+                  [disabled]="edit"
+                ></ion-radio>
+              </ion-item>
+            </ion-col>
+            <ion-col size="6">
+              <ion-item lines="none">
+                <ion-label>Inseguro</ion-label>
+                <ion-radio
+                  slot="start"
+                  value="Inseguro"
+                  mode="md"
+                  name="type"
+                  [disabled]="edit"
+                ></ion-radio>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-radio-group>
+    </ion-list>
+    <ion-list>
+      <ion-item lines="none">
+        <ion-label><strong>Categorías</strong></ion-label>
+      </ion-item>
+      <ion-radio-group class="very_small" [(ngModel)]="reportData.categoryId">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="4" *ngFor="let category of rs.categories">
+              <ion-item lines="none">
+                <ion-label>{{ category.name }}</ion-label>
+                <ion-radio
+                  slot="start"
+                  [value]="category.id"
+                  mode="md"
+                  [disabled]="edit"
+                ></ion-radio>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-radio-group>
+    </ion-list>
+  </ion-list>
+  <ion-list class="option_list" lines="none" *ngIf="!edit">
+    <ion-item lines="none" class="section-title">
+      <ion-label><strong>Observaciones</strong></ion-label>
+    </ion-item>
+    <ion-item *ngFor="let risk of rs.risks;let i = index">
+      <ion-label>{{ risk.name }}</ion-label>
+      <!-- <ion-checkbox slot="start" mode="md" [value]="risk.id" (ionChange)="manageChk($event,risk.id)" [disabled]="edit"></ion-checkbox> -->
+      <ion-checkbox
+        slot="start"
+        mode="md"
+        [value]="risk.id"
+        (ionChange)="manageChk($event)"
+        [disabled]="edit"
+      ></ion-checkbox>
+    </ion-item>
+  </ion-list>
+  <ion-list class="option_list" lines="none" *ngIf="edit">
+    <ion-item lines="none" class="section-title">
+      <ion-label><strong>Observaciones</strong></ion-label>
+    </ion-item>
+    <ion-item *ngFor="let risk of rs.risks;let i = index">
+      <ion-label>{{ risk.name }}</ion-label>
+      <ion-checkbox
+        slot="start"
+        mode="md"
+        [value]="risk.id"
+        [(ngModel)]="risks_model[i]"
+        [disabled]="edit"
+      ></ion-checkbox>
+    </ion-item>
+  </ion-list>
+  <ion-list
+    *ngIf="!edit || (edit && reportData.url_front != null) || (edit && reportData.url_back != null)"
+  >
+    <ion-item lines="none" class="section-title">
+      <ion-label><strong>Imágenes Frontal/Trasera</strong></ion-label>
+    </ion-item>
+    <ion-item lines="none">
+      <div class="fotos">
+        <div
+          class="foto"
+          [ngClass]="{'delete': reportData.url_front != null}"
+          *ngIf="!edit || (edit && reportData.url_front != null)"
+        >
+          <div class="inner-foto" (click)="presentActionSheet(1)">
+            <button ion-button type="button">
+              <ion-icon
+                name="add"
+                *ngIf="reportData.url_front == null"
+              ></ion-icon>
+            </button>
+            <img
+              class="complete"
+              [src]="reportData.url_front"
+              *ngIf="reportData.url_front != null"
+            />
+          </div>
+          <div
+            class="buttons-container"
+            *ngIf="reportData.url_front != null && !edit"
+          >
+            <ion-button (click)="rotateImage(90,1)" color="dark">
+              <ion-icon name="refresh-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="clearImg(1)">
+              <ion-icon name="trash"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+        <div
+          class="foto"
+          [ngClass]="{'delete': reportData.url_back != null}"
+          *ngIf="!edit || (edit && reportData.url_back != null)"
+        >
+          <div class="inner-foto" (click)="presentActionSheet(2)">
+            <button ion-button type="button">
+              <ion-icon
+                name="add"
+                *ngIf="reportData.url_back == null"
+              ></ion-icon>
+            </button>
+            <img
+              class="complete"
+              [src]="reportData.url_back"
+              *ngIf="reportData.url_back != null"
+            />
+          </div>
+          <div
+            class="buttons-container"
+            *ngIf="reportData.url_back != null && !edit"
+          >
+            <ion-button (click)="rotateImage(90,2)" color="dark">
+              <ion-icon name="refresh-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="clearImg(2)">
+              <ion-icon name="trash"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </ion-item>
+  </ion-list>
+  <ion-list *ngIf="show_extra">
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="stacked">Descripción de la observación</ion-label>
+      <ion-textarea
+        rows="6"
+        [(ngModel)]="reportData.description"
+        [disabled]="edit"
+      ></ion-textarea>
+    </ion-item>
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="stacked">Medidas correctivas tomadas</ion-label>
+      <ion-textarea
+        rows="6"
+        [(ngModel)]="reportData.actions"
+        [disabled]="edit"
+      ></ion-textarea>
+    </ion-item>
+  </ion-list>
+  <!-- <div class="button-container">
+          <ion-button color="primary" expand="full" (click)="showHideExtra()" *ngIf="!show_extra">Llenar información adicional</ion-button>
+          <ion-button color="primary" expand="full" (click)="showHideExtra()" *ngIf="show_extra">Ocultar información adicional</ion-button>
+      </div> -->
+  <ion-list lines="none">
+    <ion-item lines="none">
+      <div class="item_text">
+        <p>
+          La Tarjeta MAAR anticipa una situación de riesgo, debe ser llenada sin
+          temor a las consecuencias. No se atribuirá ninguna culpa ni
+          responsabilidad a los trabajadores que señalen de buena fe una
+          situación de riesgo o que detengan un trabajo, aunque dicha acción
+          posteriormente se revelase innecesaria.
+        </p>
+        <p>JUNTOS por el CERO daño.</p>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <!-- <ion-radio-group [(ngModel)]="reportData.boss_title">
+          <ion-grid>
+              <ion-row>
+                  <ion-col size="6">
+                      <ion-item lines="none">
+                          <ion-label>Capataz</ion-label>
+                          <ion-radio slot="start" value="Capataz" mode="md" name="type" [disabled]="edit"></ion-radio>
+                      </ion-item>
+                  </ion-col>
+                  <ion-col size="6">
+                      <ion-item lines="none">
+                          <ion-label>Supervisor</ion-label>
+                          <ion-radio slot="start" value="Supervisor" mode="md" name="type" [disabled]="edit"></ion-radio>
+                      </ion-item>
+                  </ion-col>
+              </ion-row>
+          </ion-grid>
+      </ion-radio-group> -->
+  <ion-list>
+    <ion-item
+      class="ion-margin-bottom"
+      lines="none"
+      *ngIf="edit && reportData.boss_signature"
+    >
+      <ion-img [src]="reportData.boss_signature"></ion-img>
+    </ion-item>
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="stacked">Responsable: Nombres y Apellidos</ion-label>
+      <ion-input
+        type="text"
+        [(ngModel)]="reportData.boss_fullname"
+        [disabled]="edit"
+      ></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-list-header *ngIf="!edit">
+    <ion-label>Firma</ion-label>
+  </ion-list-header>
+  <ion-item class="ion-margin-bottom" lines="none" *ngIf="!edit">
+    <div class="button-container">
+      <ion-button class="button-small" (click)="clearPad()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+      <ion-button
+        class="button-small"
+        (click)="activateCanvas(1)"
+        *ngIf="!flag_canvas"
+      >
+        <ion-icon name="create"></ion-icon>
+      </ion-button>
+      <ion-button
+        class="button-small"
+        (click)="activateCanvas(0)"
+        *ngIf="flag_canvas"
+      >
+        <ion-icon name="checkmark"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-item>
+  <ion-item class="ion-margin-bottom" lines="none" *ngIf="!edit">
+    <signature-pad
+      #signature
+      [options]="signaturePadOptions"
+      (drawStart)="drawStart($event)"
+      (drawEnd)="drawComplete($event)"
+      (onEndEvent)="savePad()"
+    >
+    </signature-pad>
+  </ion-item>
+  <ion-button
+    color="dark"
+    expand="full"
+    class="ion-margin-bottom"
+    (click)="saveReport()"
+    *ngIf="!edit"
+  >
+    Registrar
+  </ion-button>
+  <!-- </form> -->
+</ion-content>

@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button [routerLink]="['/profile']" routerDirection="forward">
+        <ion-icon name="person-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons class="again" slot="end">
+      <ion-button (click)="openProjectModal()">Seleccionar proyecto</ion-button>
+    </ion-buttons>
+    <ion-title>Listado</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item lines="none" class="enterprise_item">
+    <ion-label class="ion-text-wrap">{{enterprise?.name}}</ion-label>
+  </ion-item>
+  <ion-item lines="none" class="project_item">
+    <ion-label class="ion-text-wrap">{{project?.name}}</ion-label>
+  </ion-item>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <div class="card">
+          <img src="assets/imgs/maar.png" (click)="goTarjetaMain()" />
+          <ion-label>Tarjeta MAAR</ion-label>
+        </div>
+      </ion-col>
+      <!-- <ion-col size="6">
+            <div>
+                <img  src="assets/imgs/docs.png" (click)="goDocumentMain()">
+                <ion-label>Documentos Médicos</ion-label>
+            </div>
+        </ion-col> -->
+      <!--           <ion-col size="6" >
+              <div>
+                  <img  src="assets/imgs/pase.png" (click)="coronaCard()">
+                  <ion-label>Pase Laboral</ion-label>
+              </div>
+          </ion-col>
+      </ion-row>
+      <ion-row>
+          <ion-col size="6">
+              <div>
+                  <img  src="assets/imgs/temp.png" (click)="goTemperatureCard()">
+                  <ion-label>Registro de Temperatura</ion-label>
+              </div>
+          </ion-col> -->
+      <!--           <ion-col size="6"  >
+              <div>
+                  <img  src="assets/imgs/ficha.png" (click)="goFichaMain()">
+                  <ion-label>Triaje Diario COVID-19</ion-label>
+              </div>
+          </ion-col> -->
+    </ion-row>
+    <ion-row>
+      <!--           <ion-col size="6">
+              <div>
+                  <img  src="assets/imgs/docs.png" (click)="goDocumentMain()">
+                  <ion-label>Documentos Médicos</ion-label>
+              </div>
+          </ion-col> -->
+    </ion-row>
+  </ion-grid>
+</ion-content>

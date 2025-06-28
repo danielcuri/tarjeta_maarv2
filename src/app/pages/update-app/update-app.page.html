@@ -1,0 +1,15 @@
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <div class="information">
+    <ion-img src="assets/imgs/logo_2.svg"></ion-img>
+    <div class="text">
+      <span
+        >Debes estar al día para el correcto funcionamiento de la
+        aplicación</span
+      >
+    </div>
+    <ion-button (click)="goStore()" class="gradient"> Actualizar </ion-button>
+  </div>
+</ion-content>

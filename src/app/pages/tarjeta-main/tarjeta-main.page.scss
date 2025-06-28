@@ -1,0 +1,289 @@
+// --min-height: 20px;
+
+    // color: #2a62a9;
+    // font-weight: 700;
+    // margin: 1rem 0 0 0;
+
+// border-bottom: 2px solid;
+// --min-height: 20px;
+
+// font-weight: 500;
+//     color: #3a75bf;
+//     font-size: 0.9rem;
+.FiltrosLabels{
+  margin-bottom: 15px;
+}
+// Agrupa los filtros en una "tarjeta" visual suave
+.filtros-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 10px rgba(44, 62, 80, 0.09);
+  padding: 1.4rem 1.2rem 1.2rem 1.2rem;
+  margin: 1.2rem 0 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+// Aplica el estilo a los ion-item de los filtros
+.filtros-card ion-item {
+  background: transparent !important;
+  --background: transparent !important;
+  border-radius: 10px;
+  margin-bottom: 0.1rem;
+  box-shadow: none;
+  box-sizing: border-box;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+// Label de los campos de filtro
+.FiltrosLabels {
+  font-weight: 600;
+  color: #2d3436;
+  font-size: 1rem;
+  margin-bottom: 0.18rem;
+  letter-spacing: 0.02em;
+}
+
+// Botón de buscar grande y destacado
+.filtros-card .buscar-btn {
+  margin-top: 0.2rem;
+  font-weight: 600;
+  font-size: 1.08rem;
+  border-radius: 8px;
+  --box-shadow: 0 2px 10px rgba(44, 62, 80, 0.09);
+  --background: #2962ff;
+  --background-hover: #0039cb;
+  --color: #fff;
+  letter-spacing: 0.01em;
+  height: 44px;
+}
+
+// Hace que el botón ocupe todo el ancho del panel
+.filtros-card ion-button.buscar-btn {
+  width: 100%;
+  display: block;
+}
+
+// Icono de calendario con look moderno
+.transparent-fullwidth-datetime-button {
+  width: 100%;
+  background: #f4f6fa !important;
+  border-radius: 8px;
+  box-shadow: none;
+  padding: 0.4rem 0.3rem;
+  min-height: 44px;
+  font-size: 1rem;
+  margin-top: 0.13rem;
+}
+
+// Ajusta el espacio inferior de los filtros
+.filtros-card .ion-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+// Un poco más de separación en la lista de resultados
+.list_records {
+  margin-top: 2.2rem;
+}
+
+// Opcional: Cambia el color del FAB para que combine con el look general
+.corona_fab ion-fab-button {
+  --background: #2962ff;
+  --background-activated: #0039cb;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(44,62,80,0.14);
+}
+ion-header {
+    ion-buttons.again {
+        ion-button {
+            --background: none;
+            --border-radius: 20px;
+            border-radius: 20px;
+            background: #000;
+            --background: #000;
+            font-size: 0.6rem;
+            color: #FFF;
+            --color: #FFF;
+        }
+    }
+}
+
+ion-content {
+    & ion-item {
+        & ion-label {
+            font-weight: 700;
+            color : #567fb3;
+        }
+        &:first-child {
+            // border-bottom: 1px solid #567fb3;
+        }
+        &.enterprise_item {
+            --min-height: 20px;
+            & ion-label {
+                color: #2a62a9;
+                font-weight: 700;
+                margin: 1rem 0 0 0;
+            }
+        }
+        &.project_item {
+            border-bottom: 2px solid;
+            --min-height: 20px;
+            & ion-label {
+                color: #3a75bf;
+                font-size: 0.9rem;
+                font-weight: 500;
+                margin: 1rem 0 0.5rem 0;
+            }
+        }
+
+
+    }
+    & ion-grid {
+        & ion-row {
+            & ion-col {
+                & ion-button {
+                    width: 100%;
+                    word-wrap: wrap;
+                    white-space: normal;
+                    font-size: 0.8rem;
+                }
+
+            }
+        }
+    }
+    ion-segment {
+        ion-segment-button {
+            height: auto !important;
+            min-height: 25px;
+            ion-label {
+                font-size: 0.7rem;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    }
+    & ion-list {
+        &.list_records {
+            & ion-item {
+                padding-left: 0;
+                --padding-start: 0;
+                & > div.project_list {
+                    width: 100%;
+                    padding-left: 1rem;
+                    position: relative;
+                    padding-top: 1rem;
+                    padding-bottom: 1rem;
+                    &::after {
+                        position: absolute;
+                        content: '';
+                        display: block;
+                        left: 0;
+                        top: 0;
+                        width: 0.5rem;
+                        height: 100%;
+                        background: #28e070;
+                    }
+                    &.Seguro {
+                        border-bottom: 1px solid #03A60B;
+                        &::after {
+                            background: #03A60B;
+                        }
+                    }
+                    &.Inseguro {
+                        border-bottom: 1px solid #F24700;
+                        &::after {
+                            background: #F24700;
+                        }
+                    }
+                    &.green {
+                        border-bottom: 1px solid #064;
+                        &::after {
+                            background: #064;
+                        }
+                    }
+                    &.yellow {
+                        border-bottom: 1px solid #CBB30C;
+                        &::after {
+                            background: #CBB30C;
+                        }
+                    }
+                    &.red {
+                        border-bottom: 1px solid #A3201D;
+                        &::after {
+                            background: #A3201D;
+                        }
+                    }
+                    &.gray {
+                        border-bottom: 1px solid #404040;
+                        &::after {
+                            background: #404040;
+                        }
+                    }
+                    & .title {
+                        display: flex;
+                        margin-bottom: 0.5rem;
+                        & span {
+                            &:first-child {
+                                font-weight: 700;
+                                font-size: 1rem;
+                            }
+                            &:last-child {
+                                margin-left: auto;
+                                font-size: 0.9rem;
+                            }
+                        }
+                    }
+                    & .fullname {
+                        span {
+                            font-size: 0.95rem;
+                        }
+                    }
+                    & .type {
+                        span {
+                            font-size: 0.75rem;
+                            font-weight: 900;
+                        }
+                    }
+                    & .exclamation {
+                        bottom: 0;
+                        position: absolute;
+                        right: 0;
+                        transform: translate(-50%,-50%);
+                        & ion-icon {
+                            color: #3880FF;
+                            font-size: 2rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    & ion-fab {
+        &.corona_fab {
+            & ion-fab-button {
+                --border-radius: 10px;
+                width: 190px;
+                & ion-icon {
+                    color: #FFF;
+                    font-size: 1.5rem;
+                    margin-left: 0.5rem;
+                }
+            }
+        }
+        &.corona_fab_card {
+            & ion-fab-button {
+                --border-radius: 10px;
+                width: 137px;
+                & ion-icon {
+                    color: #FFF;
+                    font-size: 1.5rem;
+                    margin-left: 0.5rem;
+                }
+            }
+        }
+    }
+}

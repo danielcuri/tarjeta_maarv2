@@ -1,9 +1,9 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'maar-v2',
-  webDir: 'www'
+  appId: 'tarjeta.maar.jjc',
+  appName: 'Tarjeta Maar - JJC',
+  webDir: 'www',
 };
 
 export default config;

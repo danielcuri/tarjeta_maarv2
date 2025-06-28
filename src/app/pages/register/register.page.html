@@ -1,0 +1,109 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ion-content [fullscreen]="true" scroll-y="true">
+  <div class="container" [ngStyle]="{background: bg_container}">
+    <div class="header" *ngIf="v >= 6">
+      <img src="assets/imgs/logo_2.svg" />
+    </div>
+    <div class="header" *ngIf="v < 6">
+      <img src="assets/imgs/logo_1.svg" />
+    </div>
+    <form action="" (submit)="register($event)">
+      <ion-list>
+        <ion-item lines="inset">
+          <ion-label position="stacked" [ngStyle]="{color: color}"
+            >Nombre Completo</ion-label
+          >
+          <ion-input
+            name="fullname"
+            [(ngModel)]="userData.fullname"
+            type="text"
+            [ngStyle]="{color: color}"
+          ></ion-input>
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-label position="stacked" [ngStyle]="{color: color}"
+            >Nro de Documento</ion-label
+          >
+          <ion-input
+            name="document"
+            [(ngModel)]="userData.document"
+            [ngStyle]="{color: color}"
+            type="text"
+            inputmode="numeric"
+            maxlength="8"
+          ></ion-input>
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-label position="stacked" [ngStyle]="{color: color}"
+            >Confirmar Nro de Documento</ion-label
+          >
+          <ion-input
+            name="confirmDni"
+            [(ngModel)]="userData.confirmDni"
+            [ngStyle]="{color: color}"
+            type="text"
+            inputmode="numeric"
+            maxlength="8"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="inset">
+          <ion-label position="stacked" [ngStyle]="{color: color}"
+            >Correo</ion-label
+          >
+          <ion-input
+            name="email"
+            [(ngModel)]="userData.email"
+            type="text"
+            [ngStyle]="{color: color}"
+          ></ion-input>
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-label position="stacked" [ngStyle]="{color: color}"
+            >Contraseña</ion-label
+          >
+          <ion-input
+            name="password"
+            [(ngModel)]="userData.password"
+            type="password"
+            [ngStyle]="{color: color}"
+          ></ion-input>
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-label position="stacked" [ngStyle]="{color: color}"
+            >Confirmar Contraseña</ion-label
+          >
+          <ion-input
+            name="confirmPassword"
+            [(ngModel)]="userData.confirmPassword"
+            type="password"
+            [ngStyle]="{color: color}"
+          ></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label class="checkterm" [ngStyle]="{color: color}"
+            >¿Aceptas los
+            <a href="javascript:void(0);" (click)="termsLegal()"
+              >términos y condiciones</a
+            >?</ion-label
+          >
+          <ion-checkbox
+            slot="start"
+            value="Si"
+            name="terms"
+            mode="md"
+            [(ngModel)]="userData.terms"
+          ></ion-checkbox>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button type="submit" class="gradient">Registrar</ion-button>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button type="submit" class="gradient-white" (click)="back()"
+            >Volver</ion-button
+          >
+        </ion-item>
+      </ion-list>
+    </form>
+  </div>
+</ion-content>

@@ -1,0 +1,27 @@
+<ion-content>
+  <div class="container">
+    <div class="header">
+      <img src="assets/imgs/logo_2.svg" />
+    </div>
+    <form action="" (submit)="recoverPass($event)">
+      <ion-list>
+        <ion-item>
+          <ion-label position="stacked">Correo</ion-label>
+          <ion-input
+            name="email"
+            [(ngModel)]="userData.email"
+            type="text"
+          ></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button type="submit" class="gradient">Recuperar</ion-button>
+        </ion-item>
+        <ion-item lines="none">
+          <small routerDirection="root" routerLink="/login"
+            >Iniciar sesión</small
+          >
+        </ion-item>
+      </ion-list>
+    </form>
+  </div>
+</ion-content>

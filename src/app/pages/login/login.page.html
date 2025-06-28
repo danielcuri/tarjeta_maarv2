@@ -1,0 +1,56 @@
+<ion-content>
+  <div class="container" [ngStyle]="{background: bg_container}">
+    <div class="header" *ngIf="v >= 6">
+      <img src="assets/imgs/logo_2.svg" />
+    </div>
+    <div class="header" *ngIf="v < 6">
+      <img src="assets/imgs/logo_1.svg" />
+    </div>
+    <form action="" (submit)="login($event)">
+      <ion-list>
+        <ion-item>
+          <ion-label position="stacked" [ngStyle]="{color: color}"
+            >Documento</ion-label
+          >
+          <ion-input
+            name="document"
+            [(ngModel)]="userData.document"
+            type="text"
+            [ngStyle]="{color: color}"
+          ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked" [ngStyle]="{color: color}"
+            >Contraseña</ion-label
+          >
+          <ion-input
+            name="password"
+            [(ngModel)]="userData.password"
+            type="password"
+            [ngStyle]="{color: color}"
+          ></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button type="submit" class="gradient">Ingresar</ion-button>
+        </ion-item>
+        <ion-item lines="none">
+          <small
+            routerDirection="forward"
+            routerLink="/recover-pass"
+            [ngStyle]="{color: color}"
+            >¿Olvidaste tu contraseña?</small
+          >
+        </ion-item>
+        <ion-item lines="none" style="margin-top: 0px">
+          <small
+            routerDirection="forward"
+            routerLink="/register"
+            [ngStyle]="{color: color}"
+            >Registrar</small
+          >
+        </ion-item>
+      </ion-list>
+    </form>
+    <div class="version" [ngStyle]="{color: color}">Versión: {{version}}</div>
+  </div>
+</ion-content>

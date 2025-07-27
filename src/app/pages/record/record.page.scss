@@ -1,4 +1,4 @@
-    ion-content {
+ion-content {
     --background: none;
     background-color: #FFF;
     & .item-interactive-disabled.sc-ion-label-md-h, .item-interactive-disabled .sc-ion-label-md-h {
@@ -186,3 +186,17 @@
         }
     }
 }
+
+.custom-canvas {
+    border: 1px solid #000;
+    width: 100%;
+    max-width: 700px;
+    height: 300px;
+  } 
+  
+  @media (max-width: 700px) {
+    .custom-canvas {
+      width: 350px;
+      height: 150px;
+    }
+  }

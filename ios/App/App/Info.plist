@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+        <string>Tarjeta Maar - JJC</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+<string>Usamos la cámara para que el usuario registre evidencia fotográfica de observaciones de seguridad en campo.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Necesitamos acceso a la galería para que el usuario pueda adjuntar imágenes de observaciones de seguridad previamente tomadas.</string>
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Se requiere permiso para guardar imágenes capturadas como evidencia de observaciones en la galería del dispositivo.</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Usamos el micrófono para grabar audio junto con video como evidencia de observaciones de seguridad.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+<string>Usamos tu ubicación para mostrar empresas cercanas y permitirte registrar tu tarjeta MAAR en el centro más próximo.</string>
+
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>Usamos tu ubicacion para poder monitorear los centros en los cuales suceden mas registros y poder tomar las medidas correctivas del caso</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+</dict>
+</plist>

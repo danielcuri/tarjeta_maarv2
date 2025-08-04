@@ -25,8 +25,10 @@ export class RecoverPassPage implements OnInit {
 
   recoverPass(type: any) {
     this.loading.present();
+    console.log(this.userData);
     this.us.recoverPass(this.userData).subscribe(
       (data) => {
+        console.log(data);
         this.loading.dismiss();
         if (data.error) {
           this.us.manageErrors(data);

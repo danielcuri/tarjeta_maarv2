@@ -1,13 +1,60 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>activateUserCode</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <div class="container">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <figure>
+            <img src="assets/imgs/logo.svg" />
+          </figure>
+        </ion-col>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">activateUserCode</ion-title>
-    </ion-toolbar>
-  </ion-header>
+        <ion-col size="12">
+          <div class="description">
+            <span>
+              Ingrese el código de verificación que le enviamos por correo
+              electrónico.
+            </span>
+          </div>
+        </ion-col>
+
+        <ion-col size="12">
+          <div class="code-input-container" (click)="focusInput()">
+            <div
+              *ngFor="let digit of codeArray; let i = index"
+              class="digit-box"
+              [class.active]="i === code.length"
+            >
+              {{ digit }}
+            </div>
+            <input
+              type="text"
+              maxlength="4"
+              [(ngModel)]="code"
+              (input)="onInput($event)"
+              (keydown)="onBackspace($event)"
+              #hiddenInput
+              class="hidden-input"
+            />
+          </div>
+        </ion-col>
+
+        <ion-col size="12">
+          <ion-button class="gradient" expand="block" (click)="verifyCode()"
+            >Verificar código</ion-button
+          >
+        </ion-col>
+
+        <ion-col size="12">
+          <ion-button
+            fill="clear"
+            color="light"
+            size="small"
+            (click)="logout()"
+          >
+            Volver
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

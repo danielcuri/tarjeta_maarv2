@@ -1,13 +1,29 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>activateUser</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">activateUser</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <div class="container">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <figure>
+            <img src="assets/imgs/logo.svg" />
+          </figure>
+        </ion-col>
+        <ion-col size="12">
+          <div class="description">
+            <span
+              >Por favor revisar su correo electrónico e ingrese al link adjunto
+              en el mismo para poder activar su cuenta.</span
+            >
+          </div>
+        </ion-col>
+        <ion-col size="12">
+          <ion-button class="gradient" (click)="logout()"
+            >Cerrar sesión</ion-button
+          >
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

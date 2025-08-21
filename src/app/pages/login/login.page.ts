@@ -72,6 +72,7 @@ export class LoginPage implements OnInit {
           );
           localStorage.setItem('activationDocument', this.userData.document);
           console.log('vistadealfredo');
+          this.us.clearAll();
           this.alertCtrl
             .present('Atención', 'Por favor activa tu cuenta')
             .then(() => {

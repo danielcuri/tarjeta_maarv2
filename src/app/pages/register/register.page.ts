@@ -105,30 +105,45 @@ export class RegisterPage implements OnInit {
     };
     this.loading.present();
     this.us.register(dataToSend).subscribe(
-      (data) => {
+      (resp: any) => {
         this.loading.dismiss();
-
-        if (data.type == 0) {
-          this.us.user = data.user;
-          this.us.activationEmail = this.userData.email; // Guarda email
-          this.us.activationCode = data.code; // Guarda Codigo
+      
+        // Destructuring útil
+        const payload = resp?.data;   // donde viene type, code, etc.
+        const user    = resp?.user;   // el usuario completo
+        const message = resp?.message ?? 'Respuesta inválida del servidor';
+      
+        if (resp?.error) {
+          this.alertCtrl.present('Error', message);
+          return;
+        }
+      
+        if (payload?.type === 0) {
+          this.us.user = user;
+          this.us.activationEmail = this.userData.email;
+          this.us.activationCode  = payload?.code; // <- ¡ojo aquí!
           this.us.saveData();
           localStorage.setItem('activationEmail', this.userData.email);
-          localStorage.setItem('activationCode', data.code.toString());
-        } else if (data.type == 1) {
+          localStorage.setItem('activationCode', String(payload?.code ?? ''));
+          // aquí si corresponde, navega a pantalla de activación
+          // Aviso y redirección a login en 3s
+          this.alertCtrl.present('JJC', 'Usuario Creado').then(() => {
+            this.navCtrl.setDirection('root');
+            this.router.navigate(['/login']);
+          });
+        } else if (payload?.type === 1) {
           this.alertCtrl.present('JJC', 'Registro Exitoso').then(() => {
-            //this.navCtrl.setDirection('root');
             this.navCtrl.setDirection('root');
             this.router.navigate(['/login']);
           });
         } else {
-          const message = data.message || 'Respuesta inválida del servidor';
-          this.alertCtrl.present('Error', message);
+          this.alertCtrl.present('Error', 'Estructura de respuesta no esperada');
         }
       },
       (err) => {
         this.loading.dismiss();
         console.log(err);
+        this.alertCtrl.present('Error', 'No se pudo completar el registro');
       }
     );
   }

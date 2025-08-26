@@ -88,6 +88,34 @@
   margin-top: 2.2rem;
 }
 
+.fab-fix {
+  position: absolute; /* clave con slot=fixed */
+  right: 18px;
+  bottom: 55px;
+  z-index: 11;
+}
+@supports (bottom: calc(var(--ion-safe-area-bottom) + 1px)) {
+  .fab-fix {
+    bottom: calc(var(--ion-safe-area-bottom, 0px) + 55px);
+  }
+}
+
+/* Estilo del botón (antes lo tenías en .corona_fab ion-fab-button) */
+.fab-fix ion-fab-button {
+  --background: #2962ff;
+  --background-activated: #0039cb;
+  --border-radius: 10px;
+  width: 190px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(44,62,80,0.14);
+}
+.fab-fix ion-fab-button ion-icon {
+  font-size: 1.5rem;
+  margin-left: 0.5rem;
+}
+
 // Opcional: Cambia el color del FAB para que combine con el look general
 .corona_fab ion-fab-button {
   --background: #2962ff;

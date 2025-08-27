@@ -17,9 +17,11 @@ export class AppComponent {
   initializeApp() {
     this.platform.ready().then(() => {
       console.log('INICIAAAAR');
+      document.body.classList.remove('dark');
+      document.documentElement.classList.remove('ion-palette-dark');
 
       if (Capacitor.getPlatform() !== 'web') {
-        StatusBar.setStyle({ style: Style.Default }); // o 'LIGHT'
+        StatusBar.setStyle({ style: Style.Light  }); // o 'LIGHT'
       }
 
       SplashScreen.hide();

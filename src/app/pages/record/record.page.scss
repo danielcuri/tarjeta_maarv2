@@ -1,3 +1,19 @@
+.toolbar-tall{
+  --min-height: 90px; /* 80–92px */
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+.back-btn-lg{
+  height: 48px;          
+  width: 48px;
+  border-radius: 9999px;
+  margin-top: 15px;  
+}
+.back-btn-lg ion-icon{
+  font-size: 28px;        
+}
+
 ion-content {
     --background: none;
     background-color: #FFF;

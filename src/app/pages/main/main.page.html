@@ -1,14 +1,14 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="toolbar-tall">
     <ion-buttons slot="start">
-      <ion-button [routerLink]="['/profile']" routerDirection="forward">
+      <ion-button [routerLink]="['/profile']" routerDirection="forward" class="btn-user-lg" fill="clear">
         <ion-icon name="person-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
+    
     <ion-buttons class="again" slot="end">
-      <ion-button (click)="openProjectModal()">Seleccionar proyecto</ion-button>
+      <ion-button (click)="openProjectModal()" class="btn-pill-lg">Seleccionar proyecto</ion-button>
     </ion-buttons>
-    <ion-title>Listado</ion-title>
   </ion-toolbar>
 </ion-header>
 

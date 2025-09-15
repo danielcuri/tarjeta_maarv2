@@ -1,3 +1,25 @@
+.toolbar-tall {
+  --min-height: 84px;       
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+.back-btn-lg {
+  height: 48px;
+  width: 48px;
+  margin-top: 15px;          
+}
+.back-btn-lg::part(icon) {
+  font-size: 28px;          
+}
+
+/* Título más grande */
+.title-lg {
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 15px;
+}
+
 ion-content {
     & ion-grid {
         & ion-row {

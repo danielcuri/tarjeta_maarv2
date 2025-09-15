@@ -10,6 +10,28 @@
 // font-weight: 500;
 //     color: #3a75bf;
 //     font-size: 0.9rem;
+.title-lg {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.1;
+  margin-top: 15px;
+}
+
+.toolbar-tall{
+  --min-height: 90px; /* 80–92px */
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+ion-back-button {
+  height: 48px;
+  width: 48px;
+  margin-top: 15px; 
+}
+
+ion-back-button::part(icon) {
+  font-size: 28px; 
+}
 .FiltrosLabels{
   margin-bottom: 15px;
 }

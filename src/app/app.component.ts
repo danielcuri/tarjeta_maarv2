@@ -14,20 +14,17 @@ export class AppComponent {
     this.initializeApp();
   }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      console.log('INICIAAAAR');
-      document.body.classList.remove('dark');
-      document.documentElement.classList.remove('ion-palette-dark');
+  private async initializeApp() {
+    await this.platform.ready();
 
-      if (Capacitor.getPlatform() !== 'web') {
-        StatusBar.setStyle({ style: Style.Light  }); // o 'LIGHT'
-      }
+    document.body.classList.remove('dark');
+    document.documentElement.classList.remove('ion-palette-dark');
 
-      SplashScreen.hide();
+    if (Capacitor.isNativePlatform()) {
+      await StatusBar.setOverlaysWebView({ overlay: false });
+      await StatusBar.setStyle({ style: Style.Light });
+    }
 
-      console.log('SE INICIO?');
-    });
-    console.log('PROBANDO');
+    await SplashScreen.hide();
   }
 }

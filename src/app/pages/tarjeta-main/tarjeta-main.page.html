@@ -95,7 +95,11 @@
         </div>
         <div [class]="'project_list ' + item.type" *ngIf="item.created_at">
           <div class="title">
-            <span>{{ "Area: "+item.area }}</span>
+            <span>{{ "Area: "+ (
+      (!item?.area || item?.area === 'null') 
+        ? 'No tiene área' 
+        : item.area
+    )  }}</span>
             <span>{{ item.completed | date: "dd/MM/yyyy hh:mm a" }}</span>
           </div>
           <div class="fullname">

@@ -35,7 +35,28 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 //@import "@ionic/angular/css/palettes/dark.system.css";
+/* 1) Evita que Ionic baje demasiado la opacidad al deshabilitar */
+ion-input[disabled],
+ion-textarea[disabled],
+ion-select[disabled],
+ion-datetime[disabled] {
+  opacity: 0.7 !important;
+}
 
+/* 2) Texto interno de los campos (gris más oscuro) */
+ion-input[disabled]::part(native),
+ion-textarea[disabled]::part(native),
+ion-select[disabled]::part(text),
+ion-datetime[disabled]::part(native) {
+  color: #6b7280; /* gris oscuro suave */
+}
+
+/* 3) Placeholder cuando está disabled (ligeramente más claro) */
+ion-input[disabled]::part(placeholder),
+ion-textarea[disabled]::part(placeholder) {
+  color: #9ca3af;
+  opacity: 1;
+}
 
 .alertFirst {
     & .alert-wrapper {

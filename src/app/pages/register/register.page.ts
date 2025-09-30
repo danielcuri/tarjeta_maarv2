@@ -105,7 +105,7 @@ export class RegisterPage implements OnInit {
     };
     this.loading.present();
     this.us.register(dataToSend).subscribe(
-      (resp: any) => {
+      async (resp: any) => {
         this.loading.dismiss();
       
         // Destructuring útil
@@ -122,7 +122,7 @@ export class RegisterPage implements OnInit {
           this.us.user = user;
           this.us.activationEmail = this.userData.email;
           this.us.activationCode  = payload?.code; // <- ¡ojo aquí!
-          this.us.saveData();
+          await this.us.saveData();
           localStorage.setItem('activationEmail', this.userData.email);
           localStorage.setItem('activationCode', String(payload?.code ?? ''));
           // aquí si corresponde, navega a pantalla de activación

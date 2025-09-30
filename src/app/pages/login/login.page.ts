@@ -82,7 +82,7 @@ export class LoginPage implements OnInit {
           return;
         } else if (data.type == 1) {
           this.us.user = data.user;
-          this.us.saveData();
+          await this.us.saveData();
 
           if (this.userData.password != 'maar') {
             console.log('linea70');

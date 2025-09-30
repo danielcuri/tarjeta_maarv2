@@ -113,16 +113,16 @@ export class UserService {
     this.alertCtrl.present('JJC', msg);
   }
 
-  saveData() {
-    this.saveStorage();
+  async saveData() {
+    await this.saveStorage();
   }
 
-  saveCode() {
-    this.saveStorage();
+  async saveCode() {
+    await this.saveStorage();
   }
 
-  saveEmail() {
-    this.saveStorage();
+  async saveEmail() {
+    await this.saveStorage();
   }
 
   private async saveStorage() {

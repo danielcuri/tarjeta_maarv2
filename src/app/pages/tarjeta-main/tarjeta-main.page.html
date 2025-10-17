@@ -23,22 +23,58 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-
+  <div class="dates-row">
+    <ion-item lines="none">
+      <ion-label position="stacked" class="FiltrosLabels">Desde</ion-label>
+      <ion-datetime-button
+        class="transparent-fullwidth-datetime-button"
+        datetime="desde"
+      ></ion-datetime-button>
+    </ion-item>
+  
+    <ion-item lines="none">
+      <ion-label position="stacked" class="FiltrosLabels">Hasta</ion-label>
+      <ion-datetime-button
+        class="transparent-fullwidth-datetime-button"
+        datetime="hasta"
+      ></ion-datetime-button>
+    </ion-item>
+  </div>
+  <!-- Filtro: Empresa -->
   <ion-item lines="none">
-    <ion-label position="stacked" class="FiltrosLabels">Desde</ion-label>
-    <ion-datetime-button
-      class="transparent-fullwidth-datetime-button"
-      datetime="desde"
-    ></ion-datetime-button>
+    <ion-label position="stacked" class="FiltrosLabels">Empresa</ion-label>
+    <ion-select
+      interface="popover"
+      placeholder="Selecciona empresa"
+      [(ngModel)]="selectedEnterpriseId"
+      (ionChange)="onEnterpriseChange()"
+    >
+      <ion-select-option
+        *ngFor="let e of rs?.enterprises || []"
+        [value]="e.id"
+      >
+        {{ e.name }}
+      </ion-select-option>
+    </ion-select>
   </ion-item>
 
+  <!-- Filtro: Proyecto (depende de Empresa) -->
   <ion-item lines="none">
-    <ion-label position="stacked" class="FiltrosLabels">Hasta</ion-label>
-    <ion-datetime-button
-      class="transparent-fullwidth-datetime-button"
-      datetime="hasta"
-    ></ion-datetime-button>
+    <ion-label position="stacked" class="FiltrosLabels">Proyecto</ion-label>
+    <ion-select
+      interface="popover"
+      placeholder="Selecciona proyecto"
+      [(ngModel)]="selectedProjectId"
+    >
+      <ion-select-option
+        *ngFor="let p of projectsForSelected"
+        [value]="p.id"
+      >
+        {{ p.name }}
+      </ion-select-option>
+    </ion-select>
   </ion-item>
+
 
   <div class="ion-padding-horizontal ion-padding-top">
     <ion-button expand="block" (click)="applyDateFilters()">

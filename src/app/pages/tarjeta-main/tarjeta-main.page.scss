@@ -337,3 +337,31 @@ ion-content {
         }
     }
 }
+/* Fila 50/50 para los filtros de fecha */
+.dates-row {
+  display: flex;
+  gap: 12px;           /* separa las dos columnas */
+  align-items: flex-end; /* alinea visualmente con labels stacked */
+  margin-top: 0.4rem;
+}
+
+.dates-row ion-item {
+  flex: 1 1 0;
+  --background: transparent !important;
+  background: transparent !important;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Asegura que el botón de datetime ocupe todo el ancho dentro del item */
+.dates-row .transparent-fullwidth-datetime-button {
+  width: 100%;
+}
+
+/* Responsive: en pantallas muy angostas, las fechas caen a 2 filas */
+@media (max-width: 380px) {
+  .dates-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

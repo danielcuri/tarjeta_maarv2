@@ -39,6 +39,9 @@ export class TarjetaMainPage implements OnInit {
   show_corona_card = false;
   segment_records = '0';
   enterprise: Enterprise | undefined = undefined;
+  selectedEnterpriseId: any = '';
+  selectedProjectId: any = '';
+  projectsForSelected: Project[] = [];
   private networkSubscription!: Subscription;
   @ViewChild('desdeDateModal') desdeDateModal!: IonModal;
   @ViewChild('hastaDateModal') hastaDateModal!: IonModal;
@@ -75,6 +78,12 @@ export class TarjetaMainPage implements OnInit {
         this.getGeneralInformation();
       }
     });
+    // después de setear this.enterprise y this.project:
+    this.selectedEnterpriseId = this.enterprise?.id ?? this.rs.enterprise_id ?? '';
+    if (this.enterprise?.project) {
+      this.projectsForSelected = this.enterprise.project;
+    }
+    this.selectedProjectId = this.project?.id ?? this.rs.project_id ?? '';
   }
 
   ngOnInit() {
@@ -113,108 +122,100 @@ export class TarjetaMainPage implements OnInit {
   }
 
   onFilterChange() {
+    // ====== construir startDate (00:00:00) ======
     let startDate: Date | undefined;
     if (this.fechaInicio) {
-      // fechaInicio es algo como "2025-05-20"
       const parts = this.fechaInicio.split('-');
-      // Validar que el formato es YYYY-MM-DD y los componentes son números
-      if (
-        parts.length === 3 &&
-        parts.every((part) => !isNaN(parseInt(part, 10)))
-      ) {
-        // Construye la fecha en la zona horaria local del usuario, al inicio del día
+      if (parts.length === 3 && parts.every(p => !isNaN(parseInt(p, 10)))) {
         startDate = new Date(
           parseInt(parts[0], 10),
           parseInt(parts[1], 10) - 1,
           parseInt(parts[2], 10),
-          0,
-          0,
-          0,
-          0
+          0, 0, 0, 0
         );
-      } else {
-        // Podrías querer resetear startDate o no filtrar si el formato es malo
-        startDate = undefined;
       }
     }
-
+  
+    // ====== construir endDate (23:59:59.999) ======
     let endDate: Date | undefined;
     if (this.fechaFin) {
-      // fechaFin es algo como "2025-05-21"
       const parts = this.fechaFin.split('-');
-      if (
-        parts.length === 3 &&
-        parts.every((part) => !isNaN(parseInt(part, 10)))
-      ) {
-        // Construye la fecha en la zona horaria local del usuario, al final del día
+      if (parts.length === 3 && parts.every(p => !isNaN(parseInt(p, 10)))) {
         endDate = new Date(
           parseInt(parts[0], 10),
           parseInt(parts[1], 10) - 1,
           parseInt(parts[2], 10),
-          23,
-          59,
-          59,
-          999
+          23, 59, 59, 999
         );
-      } else {
-        endDate = undefined;
       }
     }
-
-    // Log para ver con qué fechas se está intentando filtrar
-    // console.log('Intentando filtrar con:', {
-    //   fechaInicioSel: this.fechaInicio,
-    //   startDateCalc: startDate ? startDate.toISOString() : 'N/A',
-    //   fechaFinSel: this.fechaFin,
-    //   endDateCalc: endDate ? endDate.toISOString() : 'N/A',
-    // });
-
-    this.reports = this.rs.reports.filter((record: Record) => {
-      // Si no hay created_at, no se puede filtrar por fecha
-      if (!record.created_at) {
-        return false;
+  
+    const selEnterpriseId = this.selectedEnterpriseId ? String(this.selectedEnterpriseId) : '';
+    const selProjectId    = this.selectedProjectId    ? String(this.selectedProjectId)    : '';
+  
+    // --- Helper: busca enterpriseId por projectId usando rs.enterprises (fallback robusto)
+    const findEnterpriseIdByProjectId = (projectId: any): string | '' => {
+      const pid = String(projectId);
+      if (!pid || !Array.isArray(this.rs?.enterprises)) return '';
+      for (const ent of this.rs.enterprises) {
+        if (Array.isArray(ent?.project) && ent.project.some((p: any) => String(p.id) === pid)) {
+          return String(ent.id);
+        }
       }
-
-      if (!record.project || !this.project) {
-        return false;
-      }
-      if (Number(record.project.id) !== Number(this.project.id)) {
-        return false;
-      }
-
-      // Para mayor robustez con new Date(), es bueno que la cadena se parezca a ISO 8601
-      // Cambia "2025-05-20 23:48:52.982" a "2025-05-20T23:48:52.982"
+      return '';
+    };
+  
+    // --- Helper: obtiene enterpriseId desde el registro por varias rutas
+    const getRecordEnterpriseId = (rec: any): string | '' => {
+      // 1) rec.enterprise.id directo
+      if (rec?.enterprise?.id != null) return String(rec.enterprise.id);
+      // 2) rec.project.enterprise_id si existe
+      if (rec?.project?.enterprise_id != null) return String(rec.project.enterprise_id);
+      // 3) Fallback mapeando project.id → enterprise.id con catálogo local
+      if (rec?.project?.id != null) return findEnterpriseIdByProjectId(rec.project.id);
+      return '';
+    };
+  
+    this.reports = (this.rs.reports || []).filter((record: Record) => {
+      // ====== fecha válida ======
+      if (!record.created_at) return false;
+    
       const recordDateString =
         typeof record.created_at === 'string'
           ? record.created_at.replace(' ', 'T')
-          : record.created_at; // Si ya es un objeto Date o un número (timestamp)
-
+          : (record as any).created_at;
+    
       const recordDate = new Date(recordDateString);
-
-      // Verificar si la fecha del registro es válida
-      if (isNaN(recordDate.getTime())) {
-        return false; // Excluir registros con fecha inválida
+      if (isNaN(recordDate.getTime())) return false;
+    
+      // ====== filtro por Proyecto (solo si hay uno seleccionado) ======
+      if (selProjectId) {
+        if (!record.project || String((record as any).project.id) !== selProjectId) {
+          return false;
+        }
       }
-
-      let enRango = true;
-
-      if (startDate && recordDate < startDate) {
-        enRango = false;
+    
+      // ====== filtro por Empresa (solo si hay una seleccionada) ======
+      if (selEnterpriseId) {
+        const recEnterpriseId = getRecordEnterpriseId(record);
+        // Si logramos determinar empresa del registro, debe coincidir
+        if (recEnterpriseId && recEnterpriseId !== selEnterpriseId) {
+          return false;
+        }
+        // Si NO logramos determinar empresa del registro, NO lo excluimos (evita falsos negativos).
+        // Esto permite que entren registros huérfanos cuando no traen enterprise, pero si te molesta,
+        // cambia esta lógica para excluirlos cuando no se puede verificar.
       }
-      // Es importante que esta sea una condición separada y no un else if,
-      // para que ambas cotas (inicio y fin) se apliquen.
-      if (endDate && recordDate > endDate) {
-        enRango = false;
-      }
-
-      // Para depuración detallada (puede generar mucho output):
-      // console.log(`Record: ${record.created_at}, RecordDate: ${recordDate.toISOString()}, Start: ${startDate?.toISOString()}, End: ${endDate?.toISOString()}, EnRango: ${enRango}`);
-
-      return enRango;
+    
+      // ====== filtro por RANGO DE FECHAS ======
+      if (startDate && recordDate < startDate) return false;
+      if (endDate && recordDate > endDate) return false;
+    
+      return true;
     });
-
-    // console.log('Número de reportes filtrados:', this.reports.length);
   }
+
+
   async ionViewWillEnter() {
     await this.rs.loadStorage();
 
@@ -260,7 +261,17 @@ export class TarjetaMainPage implements OnInit {
       this.show_corona = this.rs.corona_data?.can_register_covid;
     }
   }
-
+  onEnterpriseChange() {
+    this.enterprise = this.searchEnterpriseById(this.selectedEnterpriseId) || undefined;
+    this.projectsForSelected = this.enterprise?.project || [];
+    // Si el proyecto seleccionado ya no pertenece a esta empresa, resetea
+    if (!this.projectsForSelected.some(p => String(p.id) === String(this.selectedProjectId))) {
+      this.selectedProjectId = '';
+      this.project = null;
+    } else {
+      this.project = this.searchProjectById(this.enterprise!, this.selectedProjectId);
+    }
+  }
   ionViewDidEnter() {
     if (!this.us.user?.roles) {
       this.logout();

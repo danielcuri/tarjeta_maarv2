@@ -52,6 +52,9 @@ export class RecordService {
   getInitInfo() {
     return this.query.executeQuery<General>('post', '/getInitInfo', {});
   }
+  getNotifications() {
+    return this.query.executeQuery<General>('get', '/notifications', {});
+  }
 
   getGeneralInformation(userId: number) {
     return this.query.executeQuery<OfflineGeneral>(

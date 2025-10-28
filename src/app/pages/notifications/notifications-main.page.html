@@ -1,0 +1,120 @@
+<ion-header>
+  <ion-toolbar class="toolbar-tall">
+    <ion-buttons slot="start">
+      <ion-back-button text="" defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="title-lg">Notificaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- Empresa / Proyecto -->
+  <ion-item lines="none" class="enterprise_item">
+    <ion-label class="ion-text-wrap">{{ enterprise?.name }}</ion-label>
+  </ion-item>
+  <ion-item lines="none" class="project_item">
+    <ion-label class="ion-text-wrap">{{ project?.name }}</ion-label>
+  </ion-item>
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Fechas -->
+  <div class="dates-row">
+    <ion-item lines="none">
+      <ion-label position="stacked" class="FiltrosLabels">Desde</ion-label>
+      <ion-datetime-button datetime="desde"></ion-datetime-button>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-label position="stacked" class="FiltrosLabels">Hasta</ion-label>
+      <ion-datetime-button datetime="hasta"></ion-datetime-button>
+    </ion-item>
+  </div>
+
+  <!-- Filtro: Empresa -->
+  <ion-item lines="none">
+    <ion-label position="stacked" class="FiltrosLabels">Empresa</ion-label>
+    <ion-select
+      interface="popover"
+      placeholder="Selecciona empresa"
+      [(ngModel)]="selectedEnterpriseId"
+      (ionChange)="onEnterpriseChange()"
+    >
+      <ion-select-option *ngFor="let e of rs?.enterprises || []" [value]="e.id">
+        {{ e.name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- Filtro: Proyecto -->
+  <ion-item lines="none">
+    <ion-label position="stacked" class="FiltrosLabels">Proyecto</ion-label>
+    <ion-select
+      interface="popover"
+      placeholder="Selecciona proyecto"
+      [(ngModel)]="selectedProjectId"
+    >
+      <ion-select-option *ngFor="let p of projectsForSelected" [value]="p.id">
+        {{ p.name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- 🆕 Filtro por DNI -->
+  <ion-item lines="none">
+    <ion-label position="stacked" class="FiltrosLabels">Buscar por DNI</ion-label>
+    <ion-input
+      placeholder="Ingrese DNI"
+      [(ngModel)]="searchDni"
+      type="text"
+      maxlength="15"
+      clearInput
+    ></ion-input>
+  </ion-item>
+
+  <div class="ion-padding-horizontal ion-padding-top">
+    <ion-button expand="block" (click)="applyFilters()">
+      <ion-icon slot="start" name="search-outline"></ion-icon>
+      Buscar
+    </ion-button>
+  </div>
+
+  <!-- Modal Fechas -->
+  <ion-modal [keepContentsMounted]="true" #desdeDateModal>
+    <ng-template>
+      <ion-datetime
+        id="desde"
+        presentation="date"
+        [(ngModel)]="fechaInicio"
+        (ionChange)="onDateSelectedAndClose('desde')"
+      ></ion-datetime>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal [keepContentsMounted]="true" #hastaDateModal>
+    <ng-template>
+      <ion-datetime
+        id="hasta"
+        presentation="date"
+        [(ngModel)]="fechaFin"
+        (ionChange)="onDateSelectedAndClose('hasta')"
+      ></ion-datetime>
+    </ng-template>
+  </ion-modal>
+
+  <!-- 📋 Lista de notificaciones filtradas -->
+  <ion-list *ngIf="filteredReports.length > 0" lines="none" class="list_records">
+    <ion-item *ngFor="let n of filteredReports">
+      <ion-label>
+        <h2>{{ n.directedUser?.fullname }}</h2>
+        <p>{{ n.accionDisciplinaria }} — {{ n.motivoItem?.reason }}</p>
+        <p>Empresa: {{ n.project?.enterprise?.name }}</p>
+        <p>Proyecto: {{ n.project?.name }}</p>
+        <p>Fecha: {{ n.notified_at | date: 'dd/MM/yyyy' }}</p>
+        <p><b>DNI:</b> {{ n.dni }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

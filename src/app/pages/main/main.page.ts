@@ -143,6 +143,9 @@ export class MainPage implements OnInit {
   goTarjetaMain() {
     this.router.navigate(['/tarjeta-main', {}]);
   }
+  goNotification() {
+    this.router.navigate(['/notifications-main', {}]);
+  }
   goFichaMain() {
     this.router.navigate(['/ficha-main', {}]);
   }

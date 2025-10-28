@@ -89,6 +89,10 @@ const routes: Routes = [
     path: 'tarjeta-main',
     loadChildren: () => import('./pages/tarjeta-main/tarjeta-main.module').then( m => m.TarjetaMainPageModule)
   },
+  {
+    path: 'notifications-main',
+    loadChildren: () => import('./pages/notifications/notifications-main.module').then( m => m.NotificationsMainPageModule)
+  },
 ];
 
 @NgModule({

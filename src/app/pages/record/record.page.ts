@@ -14,6 +14,7 @@ import { AlertCtrlService } from 'src/app/services/alert-ctrl.service';
 import { Observable } from 'rxjs';
 import * as momentTz from 'moment-timezone';
 import { Project } from 'src/app/interfaces/general_offline';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-record',
@@ -26,6 +27,11 @@ export class RecordPage implements OnInit {
 
   project: Project | null = null;
   enterprise: Enterprise | undefined = undefined;
+  enterprises: Enterprise[] = [];
+  projects: Project[] = [];
+
+  selectedEnterpriseId: number | '' = '';
+  selectedProjectId: number | '' = '';
   document: "" | undefined;
   //@ViewChild('signature') signaturePad!: SignaturePadComponent;
   //@ViewChild('signature', { static: false, read: ElementRef }) signaturePadElementRef!: ElementRef;
@@ -104,14 +110,47 @@ export class RecordPage implements OnInit {
     console.log(this.document);
     this.reportData.worker_id_number = this.document;
     await this.rs.loadStorage();
+    await this.ensureOfflineData();
+    this.enterprises = this.rs.enterprises || [];
+    this.enterprises = this.rs.enterprises || [];
 
     if (this.record_id != "" && this.record_id != null) {
       this.edit = true;
 
       await this.getDetail();
 
+      if (this.project) {
+        this.selectedEnterpriseId = this.project.enterpriseId;
+        const idx = this.searchEnterpriseById(this.selectedEnterpriseId);
+        if (idx !== -1) {
+          this.enterprise = this.rs.enterprises[idx];
+          this.projects = this.enterprise?.project || [];
+        }
+        this.selectedProjectId = this.project.id;
+      }
+
 
     } else {
+      if (this.rs.enterprise_id) {
+        this.selectedEnterpriseId = +this.rs.enterprise_id;
+        const idx = this.searchEnterpriseById(this.selectedEnterpriseId);
+        if (idx !== -1) {
+          this.enterprise = this.rs.enterprises[idx];
+          this.projects = this.enterprise?.project || [];
+        }
+      }
+    
+      if (this.rs.project_id) {
+        this.selectedProjectId = +this.rs.project_id;
+        const idx = this.searchEnterpriseById(this.selectedEnterpriseId);
+        const p = (idx !== -1)
+          ? this.searchProjectById(idx, this.selectedProjectId)
+          : null;
+      
+        this.project = p;
+        this.reportData.projectId = this.selectedProjectId || null;
+        this.reportData.project_name = p?.name || '';
+      }
       let enterprise_index = this.searchEnterpriseById(this.rs.enterprise_id);
       this.enterprise = this.rs.enterprises[enterprise_index];
       this.project = this.searchProjectById(enterprise_index, this.rs.project_id);
@@ -201,26 +240,27 @@ export class RecordPage implements OnInit {
   }
 
   searchProjectById(enterprise_index: any, project_id: any): Project | null {
-
-    const enterprise = this.rs.enterprises[enterprise_index];
-
-
-    const projectsList = enterprise.project;
-
-
-    if (!Array.isArray(projectsList)) {
-
+    if (
+      enterprise_index === -1 ||
+      !Array.isArray(this.rs.enterprises) ||
+      !this.rs.enterprises[enterprise_index]
+    ) {
       return null;
     }
-
-
-    for (let index = 0; index < projectsList.length; index++) {
-      const element = projectsList[index];
+  
+    const enterprise = this.rs.enterprises[enterprise_index];
+    const projectsList = enterprise?.project || [];
+  
+    if (!Array.isArray(projectsList) || projectsList.length === 0) {
+      return null;
+    }
+  
+    for (let i = 0; i < projectsList.length; i++) {
+      const element = projectsList[i];
       if (element.id == project_id) {
         return element;
       }
     }
-
     return null;
   }
 
@@ -249,6 +289,33 @@ export class RecordPage implements OnInit {
       context.scale(ratio, ratio);
     }
   }*/
+
+    private async ensureOfflineData(): Promise<void> {
+      const hasEnterprises = Array.isArray(this.rs.enterprises) && this.rs.enterprises.length > 0;
+      const hasCategories = Array.isArray(this.rs.categories) && this.rs.categories.length > 0;
+      const hasRisks = Array.isArray(this.rs.risks) && this.rs.risks.length > 0;
+
+      if (hasEnterprises && hasCategories && hasRisks) return;
+
+      const userId = this.us.user?.id;
+      if (!userId) return; 
+
+      this.loading.present();
+      try {
+        const data = await firstValueFrom(this.rs.getGeneralInformation(userId));
+        this.rs.saveOfflineData(data);
+        this.enterprises = this.rs.enterprises || [];
+      
+        if (this.selectedEnterpriseId) {
+          const idx = this.searchEnterpriseById(this.selectedEnterpriseId);
+          this.projects = idx !== -1 ? (this.rs.enterprises[idx]?.project || []) : [];
+        }
+      } catch (e) {
+        this.alertCtrl.present('Aviso', 'No se pudo cargar la data general.');
+      } finally {
+        this.loading.dismiss();
+      }
+    }
 
 
   getDetail() {
@@ -358,7 +425,10 @@ export class RecordPage implements OnInit {
     if (this.reportData.type == "") {
       c_msg += "Debes seleccionar si es seguro o inseguro. ";
     }
-
+    if (!this.selectedEnterpriseId || !this.selectedProjectId) {
+      this.alertCtrl.present('Aviso', 'Selecciona la empresa y el proyecto.');
+      return;
+    }
     if (this.reportData.categoryId == null) {
       c_msg += "Debes seleccionar medio ambiente, seguridad, salud o calidad. "
     }
@@ -384,6 +454,7 @@ export class RecordPage implements OnInit {
     this.savePad();
     this.reportData.latitude = this.ls.current_location.latitude;
     this.reportData.longitude = this.ls.current_location.longitude;
+    this.reportData.projectId = this.selectedProjectId as number;
     this.loading.present();
     if (!this.ns.checkConnection()) {
       this.rs.saveRecordLocally(this.reportData);
@@ -647,5 +718,38 @@ export class RecordPage implements OnInit {
     base64StringLength = base64String.length;
     inBytes = (base64StringLength / 4) * 3 - padding;
     return inBytes / 1000;
+  }
+
+  onEnterpriseChange() {
+    const idx = this.searchEnterpriseById(this.selectedEnterpriseId);
+    if (idx !== -1) {
+      this.enterprise = this.rs.enterprises[idx];
+      this.projects = this.enterprise?.project || [];
+    } else {
+      this.enterprise = undefined;
+      this.projects = [];
+    }
+    // Al cambiar empresa, reinicio proyecto
+    this.selectedProjectId = '';
+    this.project = null;
+    this.reportData.projectId = null;
+    this.reportData.project_name = '';
+  }
+
+  onProjectChange() {
+    if (!this.selectedEnterpriseId || !this.selectedProjectId) {
+      this.project = null;
+      this.reportData.projectId = null;
+      this.reportData.project_name = '';
+      return;
+    }
+    const idx = this.searchEnterpriseById(this.selectedEnterpriseId);
+    const p = (idx !== -1)
+      ? this.searchProjectById(idx, this.selectedProjectId)
+      : null;
+
+    this.project = p;
+    this.reportData.projectId = this.selectedProjectId as number;
+    this.reportData.project_name = p?.name || '';
   }
 }

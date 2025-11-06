@@ -227,7 +227,7 @@ export class TarjetaMainPage implements OnInit {
         this.rs.enterprise_id = '';
         this.rs.project_id = '';
         await this.rs.saveData();
-        this.navCtrl.navigateRoot('/pre-main');
+        this.navCtrl.navigateRoot('/tarjeta-main');
         return;
       }
 
@@ -238,14 +238,14 @@ export class TarjetaMainPage implements OnInit {
           this.rs.enterprise_id = '';
           this.rs.project_id = '';
           await this.rs.saveData();
-          this.navCtrl.navigateRoot('/pre-main');
+          this.navCtrl.navigateRoot('/tarjeta-main');
           return;
         }
       } else {
         this.rs.enterprise_id = '';
         this.rs.project_id = '';
         await this.rs.saveData();
-        this.navCtrl.navigateRoot('/pre-main');
+        this.navCtrl.navigateRoot('/tarjeta-main');
         return;
       }
     }
@@ -285,10 +285,6 @@ export class TarjetaMainPage implements OnInit {
   }
 
   createReport() {
-    if (!this.enterprise || !this.project) {
-      this.showError();
-      return;
-    }
     this.router.navigate(['/record']);
   }
   async showError() {

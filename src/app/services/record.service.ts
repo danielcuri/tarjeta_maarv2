@@ -45,8 +45,31 @@ export class RecordService {
     );
   }
 
-  getUserFiles() {
-    return this.query.executeQuery<UserFileAnswer>('post', '/getUserFiles', {});
+  getFiles(params: any = {}) {
+  const clean = { ...params };
+  if (clean.filter && typeof clean.filter !== 'string') {
+    clean.filter = JSON.stringify(clean.filter);
+  }
+  if (!clean.limit) clean.limit = 20; // 20 por página
+  if (!clean.sort)  clean.sort  = 'id';
+  if (!clean.order) clean.order = 'desc';
+  return this.http.get(`${environment.apiUrl}/file`, { params: clean });
+}
+
+getFiletypes(params: any = {}) {
+  const clean = { ...params };
+  if (clean.filter && typeof clean.filter !== 'string') {
+    clean.filter = JSON.stringify(clean.filter);
+  }
+  return this.http.get(`${environment.apiUrl}/filetype`, { params: clean });
+}
+
+  getUserFiles(userId: number, params: any = {}) {
+    return this.query.executeQuery<any>('get', `/file/getUserFiles/${userId}`, params);
+  }
+
+  downloadFileById(id: number) {
+    return `${environment.apiUrl}/file/download/${id}`;
   }
 
   getInitInfo() {
@@ -116,7 +139,7 @@ export class RecordService {
   async checkPreSelect() {
     await this.loadStorage();
     if (this.enterprise_id === '' || this.project_id === '') {
-      this.navCtrl.navigateRoot('/pre-main');
+      this.navCtrl.navigateRoot('/tarjeta-main');
       return false;
     }
     return true;

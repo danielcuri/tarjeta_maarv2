@@ -21,6 +21,7 @@
   --min-height: 90px; /* 80–92px */
   background: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  margin-top: 20px;
 }
 
 ion-back-button {
@@ -365,3 +366,39 @@ ion-content {
     gap: 8px;
   }
 }
+
+.link { color: var(--ion-color-primary); }
+.ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.brand {
+  width: clamp(110px, 28vw, 140px);
+  height: clamp(30px, 8vw, 40px);
+  object-fit: contain;
+  margin-top: 20px;
+}
+
+/* Fondo gris suave */
+.soft-bg { --background: #f6f7fb; }
+
+/* Card de filtros */
+.filters-card {
+  margin: 12px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+.filters-card ion-card-title { font-weight: 700; }
+
+/* Layout de fechas */
+.dates-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  margin-bottom: 8px;
+}
+.transparent-fullwidth-datetime-button { width: 100%; --background: transparent; }
+.mt-12 { margin-top: 12px; }
+
+/* Cards de notificación (opcional: mantener tu estilo actual) */
+.notif-card { margin: 10px 12px; }
+.label-top { font-size: .75rem; opacity: .7; }
+.label-bottom { font-weight: 600; }

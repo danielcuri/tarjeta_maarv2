@@ -81,10 +81,10 @@ const routes: Routes = [
       ),
     canMatch: [versionGuard, authGuardCanMatch],
   },
-  {
-    path: 'pre-main',
-    loadChildren: () => import('./pages/pre-main/pre-main.module').then( m => m.PreMainPageModule)
-  },
+  //{
+  //  path: 'pre-main',
+  //  loadChildren: () => import('./pages/pre-main/pre-main.module').then( m => m.PreMainPageModule)
+  //},
   {
     path: 'tarjeta-main',
     loadChildren: () => import('./pages/tarjeta-main/tarjeta-main.module').then( m => m.TarjetaMainPageModule)
@@ -93,6 +93,12 @@ const routes: Routes = [
     path: 'notifications-main',
     loadChildren: () => import('./pages/notifications/notifications-main.module').then( m => m.NotificationsMainPageModule)
   },
+  {
+  path: 'documents-main',
+  loadChildren: () =>
+    import('./pages/documents-main/documents-main.module')
+      .then(m => m.DocumentsMainPageModule),
+},
 ];
 
 @NgModule({

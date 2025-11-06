@@ -3,150 +3,124 @@
     <ion-buttons slot="start">
       <ion-back-button text="" defaultHref="/"></ion-back-button>
     </ion-buttons>
+
     <ion-title class="title-lg">Tarjeta MAAR</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-img class="brand" src="assets/imgs/logo.png" alt="logo"></ion-img>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="soft-bg">
+
   <div class="fab-fix" slot="fixed">
     <ion-fab-button (click)="createReport()">
       <ion-label>Crear tarjeta</ion-label>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </div>
-  <ion-item lines="none" class="enterprise_item">
-    <ion-label class="ion-text-wrap">{{enterprise?.name}}</ion-label>
-  </ion-item>
-  <ion-item lines="none" class="project_item">
-    <ion-label class="ion-text-wrap">{{project?.name}}</ion-label>
-  </ion-item>
+
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <div class="dates-row">
-    <ion-item lines="none">
-      <ion-label position="stacked" class="FiltrosLabels">Desde</ion-label>
-      <ion-datetime-button
-        class="transparent-fullwidth-datetime-button"
-        datetime="desde"
-      ></ion-datetime-button>
-    </ion-item>
-  
-    <ion-item lines="none">
-      <ion-label position="stacked" class="FiltrosLabels">Hasta</ion-label>
-      <ion-datetime-button
-        class="transparent-fullwidth-datetime-button"
-        datetime="hasta"
-      ></ion-datetime-button>
-    </ion-item>
-  </div>
-  <!-- Filtro: Empresa -->
-  <ion-item lines="none">
-    <ion-label position="stacked" class="FiltrosLabels">Empresa</ion-label>
-    <ion-select
-      interface="popover"
-      placeholder="Selecciona empresa"
-      [(ngModel)]="selectedEnterpriseId"
-      (ionChange)="onEnterpriseChange()"
-    >
-      <ion-select-option
-        *ngFor="let e of rs?.enterprises || []"
-        [value]="e.id"
-      >
-        {{ e.name }}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
 
-  <!-- Filtro: Proyecto (depende de Empresa) -->
-  <ion-item lines="none">
-    <ion-label position="stacked" class="FiltrosLabels">Proyecto</ion-label>
-    <ion-select
-      interface="popover"
-      placeholder="Selecciona proyecto"
-      [(ngModel)]="selectedProjectId"
-    >
-      <ion-select-option
-        *ngFor="let p of projectsForSelected"
-        [value]="p.id"
-      >
-        {{ p.name }}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
+  <!-- CARD DE FILTROS -->
+  <ion-card class="filters-card">
+    <ion-card-header>
+      <ion-card-title>Filtros</ion-card-title>
+    </ion-card-header>
 
+    <ion-card-content>
 
-  <div class="ion-padding-horizontal ion-padding-top">
-    <ion-button expand="block" (click)="applyDateFilters()">
-      <ion-icon slot="start" name="search-outline"></ion-icon>
-      Buscar
-    </ion-button>
-  </div>
+      <div class="dates-row">
+        <ion-item lines="none">
+          <ion-label position="stacked" class="FiltrosLabels">Desde</ion-label>
+          <ion-datetime-button class="transparent-fullwidth-datetime-button" datetime="desde"></ion-datetime-button>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked" class="FiltrosLabels">Hasta</ion-label>
+          <ion-datetime-button class="transparent-fullwidth-datetime-button" datetime="hasta"></ion-datetime-button>
+        </ion-item>
+      </div>
+
+      <!-- Empresa -->
+      <ion-item lines="none">
+        <ion-label position="stacked" class="FiltrosLabels">Empresa</ion-label>
+        <ion-select interface="popover" placeholder="Selecciona empresa"
+                    [(ngModel)]="selectedEnterpriseId" (ionChange)="onEnterpriseChange()">
+          <ion-select-option *ngFor="let e of rs?.enterprises || []" [value]="e.id">
+            {{ e.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Proyecto -->
+      <ion-item lines="none">
+        <ion-label position="stacked" class="FiltrosLabels">Proyecto</ion-label>
+        <ion-select interface="popover" placeholder="Selecciona proyecto"
+                    [(ngModel)]="selectedProjectId">
+          <ion-select-option *ngFor="let p of projectsForSelected" [value]="p.id">
+            {{ p.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" class="mt-12" (click)="applyDateFilters()">
+        <ion-icon slot="start" name="search-outline"></ion-icon>
+        Buscar
+      </ion-button>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Modales de fecha -->
   <ion-modal [keepContentsMounted]="true" #desdeDateModal>
     <ng-template>
-      <ion-datetime
-        id="desde"
-        presentation="date"
-        [(ngModel)]="fechaInicio"
-        (ionChange)="onDateSelectedAndClose('desde')"
-        placeholder="Selecciona fecha de inicio"
-      >
+      <ion-datetime id="desde" presentation="date"
+                    [(ngModel)]="fechaInicio"
+                    (ionChange)="onDateSelectedAndClose('desde')"
+                    placeholder="Selecciona fecha de inicio">
       </ion-datetime>
     </ng-template>
   </ion-modal>
 
   <ion-modal [keepContentsMounted]="true" #hastaDateModal>
     <ng-template>
-      <ion-datetime
-        id="hasta"
-        presentation="date"
-        [(ngModel)]="fechaFin"
-        (ionChange)="onDateSelectedAndClose('hasta')"
-        placeholder="Selecciona fecha final"
-      >
+      <ion-datetime id="hasta" presentation="date"
+                    [(ngModel)]="fechaFin"
+                    (ionChange)="onDateSelectedAndClose('hasta')"
+                    placeholder="Selecciona fecha final">
       </ion-datetime>
     </ng-template>
   </ion-modal>
 
+  <!-- Lista -->
   <ion-list lines="none" class="list_records">
-    <ion-item-sliding *ngFor="let item of reports;let i = index;">
+    <ion-item-sliding *ngFor="let item of reports; let i = index">
       <ion-item-options side="start">
-        <ion-item-option color="danger" (click)="deleteRecord(item,i)"
-          >Eliminar</ion-item-option
-        >
+        <ion-item-option color="danger" (click)="deleteRecord(item,i)">Eliminar</ion-item-option>
       </ion-item-options>
 
       <ion-item lines="none" (click)="goDetail(item.id)">
         <div [class]="'project_list ' + item.type" *ngIf="!item.created_at">
           <div class="title">
-            <span>{{ "Area"+item.project.name }}</span>
+            <span>{{ 'Area' + item.project.name }}</span>
             <span>{{ item.date_info }}</span>
           </div>
-          <div class="fullname">
-            <span>{{ item.worker_fullname }}</span>
-          </div>
-          <div class="type">
-            <span>{{ item.type }}</span>
-          </div>
+          <div class="fullname"><span>{{ item.worker_fullname }}</span></div>
+          <div class="type"><span>{{ item.type }}</span></div>
         </div>
+
         <div [class]="'project_list ' + item.type" *ngIf="item.created_at">
           <div class="title">
-            <span>{{ "Area: "+ (
-      (!item?.area || item?.area === 'null') 
-        ? 'No se indica' 
-        : item.area
-    )  }}</span>
-            <span>{{ item.completed | date: "dd/MM/yyyy hh:mm a" }}</span>
+            <span>{{ 'Area: ' + ((!item?.area || item?.area === 'null') ? 'No se indica' : item.area) }}</span>
+            <span>{{ item.completed | date:'dd/MM/yyyy hh:mm a' }}</span>
           </div>
-          <div class="fullname">
-            <span>{{ item.worker_fullname }}</span>
-          </div>
-          <div class="type">
-            <span>{{ item.type }}</span>
-          </div>
-          <div class="exclamation">
-            <ion-icon name="eye"></ion-icon>
-          </div>
+          <div class="fullname"><span>{{ item.worker_fullname }}</span></div>
+          <div class="type"><span>{{ item.type }}</span></div>
+          <div class="exclamation"><ion-icon name="eye"></ion-icon></div>
         </div>
       </ion-item>
     </ion-item-sliding>

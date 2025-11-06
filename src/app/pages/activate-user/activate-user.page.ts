@@ -49,7 +49,7 @@ export class ActivateUserPage implements OnInit {
         if (data && data.user && data.user.status === 1) {
           this.us.user.status = 1;
           this.us.saveData();
-          this.navCtrl.navigateRoot('/pre-main');
+          this.navCtrl.navigateRoot('/tarjeta-main');
         }
       },
       (err) => {

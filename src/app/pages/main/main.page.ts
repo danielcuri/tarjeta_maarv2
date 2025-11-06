@@ -15,10 +15,10 @@ import { NetworkService } from 'src/app/services/network.service';
 import { RecordService } from 'src/app/services/record.service';
 import { UserService } from 'src/app/services/user.service';
 import { VersionService } from 'src/app/services/version.service';
-import { PreMainPage } from '../pre-main/pre-main.page';
 import { Browser } from '@capacitor/browser';
 import { environment } from 'src/environments/environment';
 import { Device } from '@capacitor/device';
+
 
 @Component({
   selector: 'app-main',
@@ -28,6 +28,7 @@ import { Device } from '@capacitor/device';
 })
 export class MainPage implements OnInit {
   project_id: any = '';
+  appVersion = '';
   reports: any[] = [];
   covid_records: any[] = [];
   loading_flag: boolean = false;
@@ -52,69 +53,34 @@ export class MainPage implements OnInit {
     private vs: VersionService,
     private modalCtrl: ModalController
   ) {
-    console.log('MainPage Constructor: Inicia');
-    // Estos logs confirman que se está ejecutando aquí
-    console.log(
-      'MainPage Constructor: rs.enterprise_id =',
-      this.rs.enterprise_id
-    );
-    console.log('MainPage Constructor: rs.enterprises =', this.rs.enterprises); // Verifica qué valor tiene rs.enterprises aquí
-
-    // >>>>>>>>>> LLAMADAS EN EL CONSTRUCTOR <<<<<<<<<<
-    // Estas llamadas intentarán usar this.rs.enterprises, que PODRÍA no estar cargado aún.
     let enterprise_index = this.searchEnterpriseById(this.rs.enterprise_id);
-    console.log('MainPage Constructor: enterprise_index =', enterprise_index);
-    // Solo intenta asignar si la empresa fue encontrada
     if (
       enterprise_index !== -1 &&
       this.rs.enterprises &&
       enterprise_index < this.rs.enterprises.length
     ) {
       this.enterprise = this.rs.enterprises[enterprise_index];
-      console.log(
-        'MainPage Constructor: Empresa asignada.',
-        this.enterprise?.name
-      );
-      // Ahora intenta buscar el proyecto DENTRO del if donde la empresa existe
       this.project = this.searchProjectById(
         enterprise_index,
         this.rs.project_id
-      ); // <-- Aquí se llama el método del error
-      console.log(
-        'MainPage Constructor: Proyecto asignado.',
-        this.project?.name
-      );
+      ); 
     } else {
       console.warn(
         'MainPage Constructor: Empresa seleccionada no encontrada o data no cargada en RecordService durante el constructor.'
       );
-      // this.enterprise y this.project se quedarán con sus valores iniciales (undefined/null)
-      // Considera si necesitas redirigir a /pre-main aquí si es un estado inválido
-      // this.navCtrl.navigateRoot('/pre-main');
     }
-    // >>>>>>>>>> FIN LLAMADAS EN EL CONSTRUCTOR <<<<<<<<<<
 
     this.networkSubscription = this.ns.isConnected$.subscribe((isConnected) => {
-      console.log('MainPage SUBSCRIBE - CONNECTED?', isConnected);
-      console.log('MainPage SUBSCRIBE - LOADING FLAG?', this.loading_flag);
       const hasConnectionChanged = this.ns.checkConnectionAndResetFlag();
 
       if (isConnected && !this.loading_flag && hasConnectionChanged) {
-        console.log(
-          'MainPage SUBSCRIBE: Connection detected, potentially fetching new data.'
-        );
-        // Llama a la lógica para sincronizar/obtener data online si es necesario
-        // Asegúrate de que getGeneralInformation/getInfo pueda ejecutarse de forma segura aquí
         this.getGeneralInformation();
       }
     });
-    console.log('MainPage Constructor: Finaliza');
   }
 
   ionViewDidEnter() {
-    console.log('DID ENTER');
     if (!this.us.user.roles) {
-      console.log('LOGOUT');
       this.logout();
     }
     this.ls.getCurrentLocation();
@@ -132,12 +98,8 @@ export class MainPage implements OnInit {
   }
 
   ngOnInit() {
-    console.log('INICIAR');
-    this.openProjectModal();
   }
   ngOnDestroy() {
-    // Asegúrate de desuscribirte para evitar posibles fugas de memoria
-    console.log('DESTROY');
     this.networkSubscription.unsubscribe();
   }
   goTarjetaMain() {
@@ -170,7 +132,6 @@ export class MainPage implements OnInit {
   }
 
   searchEnterpriseById(enterprise_id: any) {
-    console.log('SERACHING');
     for (let index = 0; index < this.rs.enterprises.length; index++) {
       const element = this.rs.enterprises[index];
       if (element.id == enterprise_id) {
@@ -181,39 +142,10 @@ export class MainPage implements OnInit {
     return -1;
   }
   searchProjectById(enterprise_index: any, project_id: any): Project | null {
-    console.log(
-      'MainPage searchProjectById: Searching for project ID',
-      project_id,
-      ' within enterprise index',
-      enterprise_index
-    );
-
-    // ... verificaciones anteriores ...
-
     const enterprise = this.rs.enterprises[enterprise_index];
 
-    // ... verificaciones de enterprise ...
+    const projectsList = enterprise.project;
 
-    // >>>>>>>>>> AÑADIR LOGS DE DIAGNÓSTICO AQUÍ <<<<<<<<<<
-    console.log('MainPage searchProjectById: Objeto empresa:', enterprise);
-    console.log(
-      'MainPage searchProjectById: Valor de enterprise.project ANTES de asignar projectsList:',
-      enterprise.project
-    );
-    // >>>>>>>>>> FIN LOGS <<<<<<<<<<
-
-    const projectsList = enterprise.project; // <<<<< Esta línea asigna projectsList (Probable línea 156 ahora)
-
-    // >>>>>>>>>> AÑADIR LOG DE DIAGNÓSTICO AQUÍ <<<<<<<<<<
-    console.log(
-      'MainPage searchProjectById: Valor de projectsList DESPUÉS de asignar:',
-      projectsList
-    );
-    // >>>>>>>>>> FIN LOG <<<<<<<<<<
-
-    // >>>>>>>>>> REFINAR LA VERIFICACIÓN DE SEGURIDAD <<<<<<<<<<
-    // Verificar que projectsList es un array ANTES de usar .length o iterar
-    // Con los logs de arriba, sabremos exactamente qué valor tiene si no es un array.
     if (!Array.isArray(projectsList)) {
       console.warn(
         "MainPage searchProjectById: Expected 'project' to be an array but got:",
@@ -221,11 +153,7 @@ export class MainPage implements OnInit {
       );
       return null;
     }
-    // >>>>>>>>>> FIN REFINAR <<<<<<<<<<
-
-    // Ahora el loop es seguro porque 'projectsList' es garantizado un array
     for (let index = 0; index < projectsList.length; index++) {
-      // <-- Esta es probablemente la línea 157 ahora
       const element = projectsList[index];
       if (element.id == project_id) {
         return element;
@@ -234,42 +162,25 @@ export class MainPage implements OnInit {
 
     return null;
   }
-  async openProjectModal() {
-    const modal = await this.modalCtrl.create({
-      component: PreMainPage,
-      breakpoints: [0, 0.5, 0.8],
-      initialBreakpoint: 0.6, // Esto significa 60% de alto
-    });
 
-    modal.onDidDismiss().then((result) => {
-      if (result.data) {
-        const { enterprise_id, project_id } = result.data;
+  async ionViewWillEnter() {
+  const info = await Device.getInfo().catch(() => ({ platform: 'web' } as any));
+  this.appVersion = info.platform === 'ios'
+    ? environment.iosVersion
+    : environment.androidVersion;
+}
 
-        // ✅ Actualizar IDs en RecordService
-        this.rs.enterprise_id = enterprise_id;
-        this.rs.project_id = project_id;
+goDocuments() {
+  this.router.navigate(['/documents-main']);
+}
 
-        // ✅ Buscar y asignar empresa/proyecto como en el constructor
-        const enterprise_index = this.searchEnterpriseById(enterprise_id);
-        if (enterprise_index !== -1) {
-          this.enterprise = this.rs.enterprises[enterprise_index];
-          this.project = this.searchProjectById(enterprise_index, project_id);
-          console.log('Proyecto actualizado desde modal:', this.project);
-        }
-      }
-    });
-
-    await modal.present();
-  }
   logout() {
-    console.log('CHAU');
     this.loading.present();
     this.us.logout().subscribe(
       (data) => {
         this.loading.dismiss();
         this.us.clearAll();
         this.navCtrl.navigateRoot('/login');
-        console.log('LLEVADO A LOGIN');
       },
       (err) => {
         this.loading.dismiss();
@@ -288,7 +199,6 @@ export class MainPage implements OnInit {
   }
 
   getGeneralInformation(event?: any) {
-    console.log('GET INFO');
     if (!this.ns.checkConnection()) {
       this.reports = this.rs.reports;
       if (event) event.target.complete();
@@ -365,7 +275,6 @@ export class MainPage implements OnInit {
     //     return;
 
     // this.loading_flag = true;
-    console.log('LOADINGGG');
     this.loading.present();
 
     this.rs.getGeneralInformation(parameters).subscribe(

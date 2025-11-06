@@ -55,7 +55,7 @@ export class ChangePasswordPage implements OnInit {
 
         if (this.page == 'login') {
           this.navCtrl.setDirection('root');
-          this.router.navigate(['/pre-main']);
+          this.router.navigate(['/tarjeta-main']);
         }
       },
       (err) => {

@@ -6,7 +6,12 @@
               <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
       </ion-buttons>
-      <ion-title></ion-title>
+
+      <ion-title class="title-lg">Crear record</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-img class="brand" src="assets/imgs/logo.png" alt="logo"></ion-img>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -22,13 +27,34 @@
                   </div>
               </div>
           </ion-item>
-          <ion-item class="ion-margin-bottom ion-margin-top" *ngIf="enterprise">
-              <ion-label position="stacked">Empresa</ion-label>
-              <ion-input type="text" [value]="enterprise.name" disabled></ion-input>
+          <ion-item class="ion-margin-bottom ion-margin-top">
+            <ion-label position="stacked">Empresa</ion-label>
+            <ion-select
+              [(ngModel)]="selectedEnterpriseId"
+              (ionChange)="onEnterpriseChange()"
+              interface="popover"
+              placeholder="Selecciona una empresa"
+            >
+              <ion-select-option *ngFor="let e of enterprises" [value]="e.id">
+                {{ e.name }}
+              </ion-select-option>
+            </ion-select>
           </ion-item>
-          <ion-item class="ion-margin-bottom ion-margin-top" *ngIf="project">
-              <ion-label position="stacked">Proyecto</ion-label>
-              <ion-input type="text" [value]="project.name" disabled></ion-input>
+          
+          <!-- Proyecto -->
+          <ion-item class="ion-margin-bottom ion-margin-top">
+            <ion-label position="stacked">Proyecto</ion-label>
+            <ion-select
+              [(ngModel)]="selectedProjectId"
+              (ionChange)="onProjectChange()"
+              [disabled]="!projects.length"
+              interface="popover"
+              placeholder="Selecciona un proyecto"
+            >
+              <ion-select-option *ngFor="let p of projects" [value]="p.id">
+                {{ p.name }}
+              </ion-select-option>
+            </ion-select>
           </ion-item>
           <ion-item class="ion-margin-bottom">
               <ion-label position="stacked">Nombre y apellidos</ion-label>

@@ -1,24 +1,37 @@
 <ion-header>
   <ion-toolbar class="toolbar-tall">
     <ion-buttons slot="start">
-      <ion-button [routerLink]="['/profile']" routerDirection="forward" class="btn-user-lg" fill="clear">
-        <ion-icon name="person-outline"></ion-icon>
-      </ion-button>
+      <ion-img class="brand" src="assets/imgs/logo.png" alt="logo"></ion-img>
     </ion-buttons>
-    
-    <ion-buttons class="again" slot="end">
-      <ion-button (click)="openProjectModal()" class="btn-pill-lg">Seleccionar proyecto</ion-button>
+
+    <ion-title class="app-version">v {{ appVersion }}</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" class="logout" (click)="logout()">
+        <span>Salir</span>
+        <ion-icon name="log-out-outline" class="ml-4"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
-  <ion-item lines="none" class="enterprise_item">
-    <ion-label class="ion-text-wrap">{{enterprise?.name}}</ion-label>
-  </ion-item>
-  <ion-item lines="none" class="project_item">
-    <ion-label class="ion-text-wrap">{{project?.name}}</ion-label>
-  </ion-item>
+
+  <ion-card class="welcome-card">
+    <ion-item lines="none" class="welcome-row">
+      <ion-label class="welcome-title">
+        Bienvenido, {{ us.user?.fullname || us.user?.name || 'Usuario' }}
+      </ion-label>
+      <ion-button
+        [routerLink]="['/profile']"
+        routerDirection="forward"
+        class="btn-profile"
+        fill="clear"
+      >
+        <ion-icon name="person-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-card>
+  
   <ion-grid>
     <ion-row>
       <ion-col size="6">
@@ -30,8 +43,15 @@
       <!-- 🆕 Nueva card de Notificaciones -->
       <ion-col size="6">
         <div class="card">
-          <img src="assets/imgs/maar.png" (click)="goNotification()" />
+          <img src="assets/imgs/ficha.png" (click)="goNotification()" />
           <ion-label>Notificaciones</ion-label>
+        </div>
+      </ion-col>
+
+      <ion-col size="6">
+        <div class="card">
+          <img src="assets/imgs/docs.png" (click)="goDocuments()" />
+          <ion-label>Archivos</ion-label>
         </div>
       </ion-col>
       <!-- <ion-col size="6">

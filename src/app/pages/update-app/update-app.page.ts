@@ -29,7 +29,7 @@ export class UpdateAppPage implements OnInit {
     const flag = this.vs.checkCurrentVersion(1);
     flag.then((data) => {
       if (data) {
-        this.navCtrl.navigateRoot('pre-main');
+        this.navCtrl.navigateRoot('tarjeta-main');
       }
 
       if (event) event.target.complete();

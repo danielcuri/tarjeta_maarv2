@@ -16,6 +16,7 @@
   line-height: 1.1;
   margin-top: 15px;
   margin-left: 40px;
+  color: #001955;
 }
 
 .toolbar-tall{
@@ -121,16 +122,16 @@ ion-back-button::part(icon) {
 @supports (bottom: calc(var(--ion-safe-area-bottom) + 1px)) {
   .fab-fix {
     bottom: calc(var(--ion-safe-area-bottom, 0px) + 55px);
+    
   }
 }
 
 /* Estilo del botón (antes lo tenías en .corona_fab ion-fab-button) */
 .fab-fix ion-fab-button {
-  --background: #2962ff;
+  --background: #001955;
   --background-activated: #0039cb;
   --border-radius: 10px;
   width: 190px;
-  color: #fff;
   font-weight: 600;
   font-size: 1rem;
   box-shadow: 0 4px 12px rgba(44,62,80,0.14);
@@ -144,7 +145,7 @@ ion-back-button::part(icon) {
 .corona_fab ion-fab-button {
   --background: #2962ff;
   --background-activated: #0039cb;
-  color: #fff;
+  color: #001955 !important;
   font-weight: 600;
   font-size: 1rem;
   box-shadow: 0 4px 12px rgba(44,62,80,0.14);
@@ -158,8 +159,9 @@ ion-header {
             background: #000;
             --background: #000;
             font-size: 0.6rem;
-            color: #FFF;
-            --color: #FFF;
+            color: #001955 !important;
+
+            --color: #001955 !important;
         }
     }
 }
@@ -202,6 +204,7 @@ ion-content {
                     word-wrap: wrap;
                     white-space: normal;
                     font-size: 0.8rem;
+                    color: #001955 !important;
                 }
 
             }
@@ -405,6 +408,7 @@ ion-content {
   right: 16px;
   bottom: 16px;
   z-index: 20;
+  color: #001955 !important;
 }
 
 /* (Opcional) uniformar items de la lista sobre el fondo gris */
@@ -416,4 +420,8 @@ ion-content {
   width: clamp(100px, 26vw, 132px);
   height: clamp(28px, 7vw, 36px);
   object-fit: contain;
+  margin-top: 20px;
+}
+.search-button{
+  color: #001955 !important;
 }

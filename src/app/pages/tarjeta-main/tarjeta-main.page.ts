@@ -86,7 +86,11 @@ export class TarjetaMainPage implements OnInit {
     this.selectedProjectId = this.project?.id ?? this.rs.project_id ?? '';
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const me = this.us?.user; 
+    console.log('Usuario actual en TarjetaMainPage:', me);
+    await this.rs.ensureOfflineInfo(me.id);
+    this.rs.enterprises = this.rs.enterprises;
     this.setDefaultDateRange();
 
     this.onFilterChange();

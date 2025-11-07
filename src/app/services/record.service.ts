@@ -45,6 +45,25 @@ export class RecordService {
     );
   }
 
+  async ensureOfflineInfo(userId: number): Promise<void> {
+  // 1) cargar lo que ya tengas en Preferences
+  await this.loadStorage();
+
+  // 2) si no hay empresas aún, trae el paquete offline y persiste
+  if (!Array.isArray(this.enterprises) || this.enterprises.length === 0) {
+    return new Promise<void>((resolve) => {
+      this.getGeneralInformation(userId).subscribe({
+        next: (res: any) => {
+          const data = res?.data ?? res;
+          if (data) this.saveOfflineData(data); // ya existente en tu servicio
+          resolve();
+        },
+        error: () => resolve(), // no bloquear la navegación si falla
+      });
+    });
+  }
+}
+
   getFiles(params: any = {}) {
   const clean = { ...params };
   if (clean.filter && typeof clean.filter !== 'string') {

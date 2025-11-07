@@ -6,6 +6,7 @@ import { LoadingService } from 'src/app/services/loading.service';
 import { NetworkService } from 'src/app/services/network.service';
 import { UserService } from 'src/app/services/user.service';
 import { environment } from 'src/environments/environment';
+import { RecordService } from 'src/app/services/record.service';
 
 @Component({
   selector: 'app-login',
@@ -26,6 +27,7 @@ export class LoginPage implements OnInit {
   constructor(
     private us: UserService,
     private loading: LoadingService,
+    private recordService: RecordService,
     private router: Router,
     private ns: NetworkService,
     private alertCtrl: AlertCtrlService,
@@ -71,7 +73,6 @@ export class LoginPage implements OnInit {
             String(data.code || data.data?.code || '')
           );
           localStorage.setItem('activationDocument', this.userData.document);
-          console.log('vistadealfredo');
           this.us.clearAll();
           this.alertCtrl
             .present('Atención', 'Por favor activa tu cuenta')
@@ -91,6 +92,7 @@ export class LoginPage implements OnInit {
             // Verificar si hay modales abiertos (similar a saveCurrectSelection)
             //await this.openProjectModal();
             this.router.navigate(['/main']);
+            await this.recordService.ensureOfflineInfo(this.us.user.id);
 
             localStorage.removeItem('activationCode');
             localStorage.removeItem('activationDocument');

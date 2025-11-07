@@ -50,7 +50,7 @@
         <ion-label position="stacked" class="FiltrosLabels">Empresa</ion-label>
         <ion-select interface="popover" placeholder="Selecciona empresa"
                     [(ngModel)]="selectedEnterpriseId" (ionChange)="onEnterpriseChange()">
-          <ion-select-option *ngFor="let e of rs?.enterprises || []" [value]="e.id">
+          <ion-select-option *ngFor="let e of rs.enterprises || []" [value]="e.id">
             {{ e.name }}
           </ion-select-option>
         </ion-select>
@@ -67,7 +67,7 @@
         </ion-select>
       </ion-item>
 
-      <ion-button expand="block" class="mt-12" (click)="applyDateFilters()">
+      <ion-button expand="block" (click)="applyDateFilters()">
         <ion-icon slot="start" name="search-outline"></ion-icon>
         Buscar
       </ion-button>

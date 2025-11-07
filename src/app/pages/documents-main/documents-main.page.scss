@@ -1,20 +1,166 @@
-/* documents-main.page.scss */
-.bg-light {
-  --ion-background-color: #f5f6fb;
+/* ====== Tokens de color (mismos tonos que Notificaciones) ====== */
+:host {
+  --brand-primary: #001955;
+  --brand-primary-hover: #0039cb;
+  --ink-1: #2a62a9;   /* títulos/labels azules */
+  --ink-2: #3a75bf;   /* subtítulos */
+  --soft-bg: #f6f7fb;
+  --card-shadow: 0 2px 10px rgba(44, 62, 80, 0.09);
 }
 
-.brand { height: 22px; margin-right: 10px; }
+/* Fondo gris suave como notificaciones */
+.bg-light {
+  --ion-background-color: var(--soft-bg);
+}
 
-.filters-card { margin: 10px; }
+/* ====== Filtros (mismo estilo de tarjeta) ====== */
+.filters-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: var(--card-shadow);
+  padding: 1.4rem 1.2rem 1.2rem;
+  margin: 12px;
+}
 
+.filters-card ion-card-title {
+  font-weight: 700;
+  color: #2d3436;
+}
+
+.title-lg {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.1;
+  margin-top: 15px;
+  margin-left: 20px;
+  color: #001955;
+}
+
+.FiltrosLabels {
+  font-weight: 600;
+  color: #2d3436;
+  font-size: 1rem;
+  margin-bottom: 0.18rem;
+  letter-spacing: .02em;
+}
+
+/* Items de filtro “limpios” */
+.filters-card ion-item {
+  --background: transparent !important;
+  background: transparent !important;
+  border-radius: 10px;
+  margin-bottom: .1rem;
+  box-shadow: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Botón Buscar igual al de notificaciones */
+.filters-card ion-button {
+  width: 100%;
+  height: 44px;
+  font-weight: 600;
+  font-size: 1.08rem;
+  border-radius: 8px;
+  --box-shadow: var(--card-shadow);
+  --background: var(--brand-primary);
+  --background-hover: var(--brand-primary-hover);
+  --background-activated: var(--brand-primary-hover);
+  --color: #fff;
+}
+
+/* Datetime y entradas con fondo suave */
+ion-datetime-button {
+  width: 100%;
+  background: #f4f6fa !important;
+  border-radius: 8px;
+  padding: .4rem .3rem;
+  min-height: 44px;
+  font-size: 1rem;
+  margin-top: .13rem;
+}
+
+.filters-card ion-input,
+.filters-card ion-select {
+  --background: #f4f6fa;
+  background: #f4f6fa;
+  border-radius: 8px;
+  padding: .2rem .4rem;
+}
+
+/* Layout de fechas (50/50) */
 .dates-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 8px 12px;
+  margin-bottom: 8px;
 }
 
-.doc-card { margin: 10px; }
-.desc { margin: 6px 0 10px 0; color: var(--ion-color-medium); }
-.label-top { font-size: 12px; color: var(--ion-color-medium); }
-.label-bottom { font-size: 14px; font-weight: 500; }
-.btn-row { display: flex; gap: 8px; margin-top: 8px; }
+/* ====== Documentos: igual a Notificaciones (sin línea lateral) ====== */
+
+/* Quita cualquier barra/acento lateral previa */
+.doc-card::before { content: none !important; }
+
+/* Card */
+.doc-card {
+  margin: 10px 12px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(44,62,80,.09);
+  border: 1px solid #eef2fb;
+}
+
+/* Título / subtítulo */
+.doc-card ion-card-title { font-weight: 700; color: #2d3436; }
+.doc-card ion-card-subtitle { color: #3a75bf; font-weight: 500; }
+
+/* Descripción */
+.desc { margin: 6px 0 12px; color: #6b7280; }
+
+/* Bloque “Propietario” con fondo suave (como en notificaciones) */
+.doc-card ion-item {
+  --background: #f4f6fa;
+  background: #f4f6fa;
+  border-radius: 12px;
+  --padding-start: 10px;
+  --inner-padding-end: 10px;
+  margin: 6px 0 8px;
+}
+.label-top { font-weight: 600; color: #567fb3; font-size: .85rem; }
+.label-bottom { font-weight: 700; color: #2d3436; }
+
+/* Botones */
+.btn-row { display: flex; gap: 8px; margin-top: 4px; margin-left: 75px; }
+
+.doc-card ion-button {
+  --border-radius: 8px;
+  --box-shadow: 0 2px 8px rgba(44,62,80,.10);
+  font-weight: 600;
+  height: 40px;
+  width: 65%;
+}
+
+.doc-card ion-button:first-of-type { /* Descargar */
+  --background: #001955;
+  --background-activated: #0039cb;
+  --color: #fff;
+}
+
+.doc-card ion-button[fill="clear"] { /* Ver */
+  color: #2962ff;
+}
+
+
+.brand {
+  width: clamp(100px, 26vw, 132px);
+  height: clamp(28px, 7vw, 36px);
+  margin-top: 20px;
+  object-fit: contain;
+}
+
+.toolbar-tall{
+  --min-height: 60px; /* 80–92px */
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  margin-top: 20px;
+}

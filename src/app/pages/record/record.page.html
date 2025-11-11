@@ -32,6 +32,7 @@
             <ion-select
               [(ngModel)]="selectedEnterpriseId"
               (ionChange)="onEnterpriseChange()"
+              [disabled]="edit"
               interface="popover"
               placeholder="Selecciona una empresa"
             >
@@ -47,7 +48,7 @@
             <ion-select
               [(ngModel)]="selectedProjectId"
               (ionChange)="onProjectChange()"
-              [disabled]="!projects.length"
+              [disabled]="edit || !projects.length"
               interface="popover"
               placeholder="Selecciona un proyecto"
             >
@@ -266,6 +267,15 @@
           <ion-item class="ion-margin-bottom">
               <ion-label position="stacked">Responsable: Nombres y Apellidos</ion-label>
               <ion-input type="text" [(ngModel)]="reportData.boss_fullname" [disabled]="edit"></ion-input>
+          </ion-item>
+          <ion-item class="ion-margin-bottom">
+            <ion-label position="stacked">Correo para notificar</ion-label>
+            <ion-input
+              type="email"
+              [(ngModel)]="reportData.notify_email"
+              required
+              placeholder="ej.: nombre@empresa.com">
+            </ion-input>
           </ion-item>
       </ion-list>
       <ion-list-header *ngIf="!edit">

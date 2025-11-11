@@ -46,19 +46,17 @@ export class RecordService {
   }
 
   async ensureOfflineInfo(userId: number): Promise<void> {
-  // 1) cargar lo que ya tengas en Preferences
   await this.loadStorage();
 
-  // 2) si no hay empresas aún, trae el paquete offline y persiste
   if (!Array.isArray(this.enterprises) || this.enterprises.length === 0) {
     return new Promise<void>((resolve) => {
       this.getGeneralInformation(userId).subscribe({
         next: (res: any) => {
           const data = res?.data ?? res;
-          if (data) this.saveOfflineData(data); // ya existente en tu servicio
+          if (data) this.saveOfflineData(data); 
           resolve();
         },
-        error: () => resolve(), // no bloquear la navegación si falla
+        error: () => resolve(), 
       });
     });
   }
@@ -69,7 +67,7 @@ export class RecordService {
   if (clean.filter && typeof clean.filter !== 'string') {
     clean.filter = JSON.stringify(clean.filter);
   }
-  if (!clean.limit) clean.limit = 20; // 20 por página
+  if (!clean.limit) clean.limit = 20; 
   if (!clean.sort)  clean.sort  = 'id';
   if (!clean.order) clean.order = 'desc';
   return this.http.get(`${environment.apiUrl}/file`, { params: clean });

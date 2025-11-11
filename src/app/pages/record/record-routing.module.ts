@@ -5,8 +5,6 @@ import { RecordPage } from './record.page';
 
 const routes: Routes = [
   {
-    // Nueva ruta para manejar el detalle del registro con parámetros
-    // Esta ruta coincide con lo que viene DESPUÉS de '/record/'
     path: ':recordId',
     component: RecordPage
   },

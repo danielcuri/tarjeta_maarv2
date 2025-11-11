@@ -21,20 +21,16 @@ interface FileType {
   imports: [IonicModule, CommonModule, FormsModule],
 })
 export class DocumentsMainPage implements OnInit {
-  // Filtros
-  // ion-datetime retorna ISO 8601; lo convertimos a inicio/fin del día en ISO
-  fechaInicio: string | null = null;   // ISO string o null
-  fechaFin: string | null = null;      // ISO string o null
+  fechaInicio: string | null = null;   
+  fechaFin: string | null = null;      
   selectedTypeId: number | '' = '';
   searchText = '';
 
-  // Datos
   filetypes: FileType[] = [];
   docs: any[] = [];
 
-  // Paginación
   page = 1;
-  limit = 20; // 20 por página
+  limit = 20; 
   hasMore = true;
   loading = false;
 
@@ -50,10 +46,8 @@ export class DocumentsMainPage implements OnInit {
     this.fetch(true);
   }
 
-  // === UI helpers ===
   trackById = (_: number, it: any) => it?.id;
 
-  // === Cargar tipos de archivo ===
   private loadTypes() {
     this.rs.getFiletypes({
       page: 1,
@@ -68,7 +62,6 @@ export class DocumentsMainPage implements OnInit {
     });
   }
 
-  // Helpers fecha -> ISO inicio/fin de día
   private startOfDayISO(d: string | Date) {
     const x = new Date(d);
     x.setHours(0, 0, 0, 0);
@@ -80,11 +73,9 @@ export class DocumentsMainPage implements OnInit {
     return x.toISOString();
   }
 
-  // === Construir filtros para el backend ===
   private buildFilterArray() {
     const f: any[] = [];
 
-    // Tipo de archivo
     if (this.selectedTypeId !== '' && this.selectedTypeId !== null) {
       f.push({
         keyContains: 'filetypeId',
@@ -93,7 +84,6 @@ export class DocumentsMainPage implements OnInit {
       });
     }
 
-    // Fechas (created_at) en ISO VÁLIDO
     if (this.fechaInicio) {
       f.push({
         keyContains: 'created_at',
@@ -109,7 +99,6 @@ export class DocumentsMainPage implements OnInit {
       });
     }
 
-    // Texto (por nombre). Si tu helper soporta OR, luego añadimos description.
     if (this.searchText?.trim()) {
       f.push({
         keyContains: 'name',
@@ -121,7 +110,6 @@ export class DocumentsMainPage implements OnInit {
     return f;
   }
 
-  // === Pedir documentos ===
   private fetch(reset = false) {
     if (this.loading) return;
     this.loading = true;
@@ -136,7 +124,7 @@ export class DocumentsMainPage implements OnInit {
     const params = {
       page: this.page,
       limit: this.limit,
-      sort: 'created_at',   // últimos por fecha de creación
+      sort: 'created_at',  
       order: 'desc',
       filter: JSON.stringify(this.buildFilterArray()),
     };
@@ -166,9 +154,7 @@ export class DocumentsMainPage implements OnInit {
     });
   }
 
-  // Botón Buscar
   applyFilters(reset = true) {
-    // Reiniciamos estado y delegamos a fetch(), que ya arma filter en ISO
     if (reset) {
       this.page = 1;
       this.docs = [];
@@ -178,7 +164,6 @@ export class DocumentsMainPage implements OnInit {
     this.fetch(true);
   }
 
-  // Infinite scroll
   loadMore(ev: any) {
     if (!this.hasMore || this.loading) {
       ev?.target?.complete();
@@ -210,7 +195,6 @@ export class DocumentsMainPage implements OnInit {
     });
   }
 
-  // Descargar / Ver
   download(f: any) {
     window.open(f.url_file, '_blank');
   }

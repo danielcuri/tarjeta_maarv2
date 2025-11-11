@@ -33,11 +33,11 @@ export class MainPage implements OnInit {
   covid_records: any[] = [];
   loading_flag: boolean = false;
   version_flag: boolean = false;
-  project: Project | null = null; // Inicializar a null
+  project: Project | null = null; 
   show_corona = false;
   show_corona_card = false;
   segment_records = '0';
-  enterprise: Enterprise | undefined = undefined; // Inicializar a undefined
+  enterprise: Enterprise | undefined = undefined; 
   private networkSubscription!: Subscription;
   constructor(
     private router: Router,

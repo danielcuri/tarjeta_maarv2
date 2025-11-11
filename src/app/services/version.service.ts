@@ -39,7 +39,7 @@ export class VersionService {
       if (data_version) {
         this.link_android = data_version.urlAndroid;
         this.link_ios = data_version.urlIos;
-        this.data_version_obj = data_version; // <--- Agregar esta línea
+        this.data_version_obj = data_version; 
       }
     }
     console.log('data_version', data_version);

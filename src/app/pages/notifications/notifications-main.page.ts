@@ -23,33 +23,27 @@ import { UserService } from 'src/app/services/user.service';
   standalone: false,
 })
 export class NotificationsMainPage implements OnInit {
-  // Fechas
   fechaInicio: string | null = null;
   fechaFin: string | null = null;
 
-  // Filtros UI
   selectedEnterpriseId: any = '';
   selectedProjectId: any = '';
   searchDni: string = '';
 
-  // Catálogos para combos
   enterprise: Enterprise | undefined = undefined;
   project: Project | null = null;
   projectsForSelected: Project[] = [];
 
-  // Data
   reports: any[] = [];
   filteredReports: any[] = [];
   covid_records: any[] = [];
 
-  // Flags
   loading_flag = false;
   show_corona = false;
   show_corona_card = false;
 
-  // Roles
-  isAdminOrPM = false;         // rol 1 o 2
-  isCollaborator = false;      // rol 3
+  isAdminOrPM = false;     
+  isCollaborator = false;    
   canSeeProjectFilters = false;
 
   private networkSubscription!: Subscription;
@@ -69,7 +63,6 @@ export class NotificationsMainPage implements OnInit {
     private ns: NetworkService,
     private platform: Platform
   ) {
-    // Deja combos vacíos (no preseleccionar)
     this.selectedEnterpriseId = '';
     this.selectedProjectId = '';
 
@@ -84,10 +77,9 @@ export class NotificationsMainPage implements OnInit {
 
   ngOnInit() {
     this.setDefaultDateRange();
-    this.applyFilters(); // sin filtros al inicio
+    this.applyFilters(); 
   }
 
-  // -------------------- Roles --------------------
   private computeRoleFlags(): void {
     const roles = this.us.user?.roles ?? [];
 
@@ -104,7 +96,6 @@ export class NotificationsMainPage implements OnInit {
         }
       }
     } else {
-      // único rol
       if (typeof roles === 'number') ids.push(roles);
       else if (typeof roles === 'string') names.push(roles);
       else {
@@ -113,7 +104,6 @@ export class NotificationsMainPage implements OnInit {
       }
     }
 
-    // Regla: 1=Admin, 2=Jefe Proyecto, 3=Colaborador
     this.isAdminOrPM =
       ids.some((id) => id === 1 || id === 2) ||
       names.some((n) => /admin|administrador|jefe/i.test(n));
@@ -124,7 +114,6 @@ export class NotificationsMainPage implements OnInit {
 
     this.canSeeProjectFilters = this.isAdminOrPM;
 
-    // Si no puede ver filtros, limpia selección para no aplicar filtros ocultos
     if (this.isCollaborator) {
       this.selectedEnterpriseId = '';
       this.selectedProjectId = '';
@@ -132,7 +121,6 @@ export class NotificationsMainPage implements OnInit {
     }
   }
 
-  // -------------------- fechas --------------------
   private formatDateToYYYYMMDD(date: Date): string {
     const y = date.getFullYear();
     const m = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -154,14 +142,11 @@ export class NotificationsMainPage implements OnInit {
     this.applyFilters();
   }
 
-  // -------------------- lifecycle --------------------
   async ionViewWillEnter() {
     await this.rs.loadStorage();
 
-    // calcular flags de rol
     this.computeRoleFlags();
 
-    // combos locales
     this.enterprise = undefined;
     this.project = null;
     this.projectsForSelected = [];
@@ -170,7 +155,6 @@ export class NotificationsMainPage implements OnInit {
     if (this.ns.checkConnection() && userId) {
       this.getGeneralInformation();
     } else {
-      // offline
       this.reports = this.rs.reports || [];
       this.covid_records = this.rs.covid_records || [];
       this.show_corona_card =
@@ -186,7 +170,6 @@ export class NotificationsMainPage implements OnInit {
     if (this.networkSubscription) this.networkSubscription.unsubscribe();
   }
 
-  // -------------------- combos --------------------
   onEnterpriseChange() {
     this.enterprise = this.searchEnterpriseById(this.selectedEnterpriseId) || undefined;
     this.projectsForSelected = this.enterprise?.project || [];
@@ -203,7 +186,6 @@ export class NotificationsMainPage implements OnInit {
       : null;
   }
 
-  // -------------------- navegación --------------------
   createReport() {
     if (!this.enterprise || !this.project) {
       this.showError();
@@ -231,7 +213,6 @@ export class NotificationsMainPage implements OnInit {
     );
   }
 
-  // -------------------- helpers catálogo --------------------
   searchEnterpriseById(enterprise_id: any): Enterprise | undefined {
     if (!Array.isArray(this.rs.enterprises) || this.rs.enterprises.length === 0) return undefined;
     return this.rs.enterprises.find((e) => e.id == enterprise_id);
@@ -241,7 +222,6 @@ export class NotificationsMainPage implements OnInit {
     return enterprise.project.find((p: Project) => p.id == project_id) || null;
   }
 
-  // -------------------- refresh / carga --------------------
   doRefresh(event: any) {
     const userId = this.us.user?.id;
     if (!userId) {
@@ -279,9 +259,6 @@ export class NotificationsMainPage implements OnInit {
 
           const currentUserId = this.us.user?.id;
 
-          // 👥 Dataset según rol:
-          // - Admin/Jefe (1,2): ven todo.
-          // - Colaborador (3): solo las dirigidas a él.
           if (this.isCollaborator && currentUserId != null) {
             rows = rows.filter((n: any) => n.directedUserId === currentUserId);
           }
@@ -298,7 +275,6 @@ export class NotificationsMainPage implements OnInit {
     );
   }
 
-  // -------------------- filtros --------------------
   private toNum(v: any): number | null {
     if (v === undefined || v === null || v === '') return null;
     const n = Number(v);
@@ -326,7 +302,6 @@ export class NotificationsMainPage implements OnInit {
 
     let out = [...(this.reports || [])];
 
-    // Empresa/Proyecto (camel/snake/anidado)
     out = out.filter((n) => {
       const pid =
         this.toNum(n.projectId) ??
@@ -345,7 +320,6 @@ export class NotificationsMainPage implements OnInit {
       return true;
     });
 
-    // Fechas
     out = out.filter((n) => {
       const raw = n.notified_at || n.notifiedAt || n.created_at;
       if (!raw) return false;
@@ -356,7 +330,6 @@ export class NotificationsMainPage implements OnInit {
       return true;
     });
 
-    // DNI
     if (dni) {
       out = out.filter((n) =>
         String(n.dni || n.directedUser?.document || '').toLowerCase().includes(dni)
@@ -374,10 +347,9 @@ export class NotificationsMainPage implements OnInit {
     if (!url) return;
     try {
       await Browser.open({ url });
-    } catch { /* noop */ }
+    } catch {}
   }
 
-  // -------------------- alerta actualización --------------------
   async presentAlertConfirm() {
     const alert = await this.alertController.create({
       header: 'Alerta',

@@ -78,7 +78,6 @@ export class TarjetaMainPage implements OnInit {
         this.getGeneralInformation();
       }
     });
-    // después de setear this.enterprise y this.project:
     this.selectedEnterpriseId = this.enterprise?.id ?? this.rs.enterprise_id ?? '';
     if (this.enterprise?.project) {
       this.projectsForSelected = this.enterprise.project;
@@ -116,109 +115,70 @@ export class TarjetaMainPage implements OnInit {
     } else if (modalType === 'hasta' && this.hastaDateModal) {
       this.hastaDateModal.dismiss();
     }
-    // YA NO LLAMAMOS a this.onFilterChange() aquí.
-    // El ngModel ya actualizó fechaInicio o fechaFin.
   }
 
-  // NUEVO MÉTODO para ser llamado por el botón "Buscar"
   applyDateFilters() {
     this.onFilterChange();
   }
 
   onFilterChange() {
-    // ====== construir startDate (00:00:00) ======
-    let startDate: Date | undefined;
-    if (this.fechaInicio) {
-      const parts = this.fechaInicio.split('-');
-      if (parts.length === 3 && parts.every(p => !isNaN(parseInt(p, 10)))) {
-        startDate = new Date(
-          parseInt(parts[0], 10),
-          parseInt(parts[1], 10) - 1,
-          parseInt(parts[2], 10),
-          0, 0, 0, 0
-        );
-      }
-    }
-  
-    // ====== construir endDate (23:59:59.999) ======
-    let endDate: Date | undefined;
-    if (this.fechaFin) {
-      const parts = this.fechaFin.split('-');
-      if (parts.length === 3 && parts.every(p => !isNaN(parseInt(p, 10)))) {
-        endDate = new Date(
-          parseInt(parts[0], 10),
-          parseInt(parts[1], 10) - 1,
-          parseInt(parts[2], 10),
-          23, 59, 59, 999
-        );
-      }
-    }
-  
-    const selEnterpriseId = this.selectedEnterpriseId ? String(this.selectedEnterpriseId) : '';
-    const selProjectId    = this.selectedProjectId    ? String(this.selectedProjectId)    : '';
-  
-    // --- Helper: busca enterpriseId por projectId usando rs.enterprises (fallback robusto)
-    const findEnterpriseIdByProjectId = (projectId: any): string | '' => {
-      const pid = String(projectId);
-      if (!pid || !Array.isArray(this.rs?.enterprises)) return '';
-      for (const ent of this.rs.enterprises) {
-        if (Array.isArray(ent?.project) && ent.project.some((p: any) => String(p.id) === pid)) {
-          return String(ent.id);
-        }
-      }
-      return '';
-    };
-  
-    // --- Helper: obtiene enterpriseId desde el registro por varias rutas
-    const getRecordEnterpriseId = (rec: any): string | '' => {
-      // 1) rec.enterprise.id directo
-      if (rec?.enterprise?.id != null) return String(rec.enterprise.id);
-      // 2) rec.project.enterprise_id si existe
-      if (rec?.project?.enterprise_id != null) return String(rec.project.enterprise_id);
-      // 3) Fallback mapeando project.id → enterprise.id con catálogo local
-      if (rec?.project?.id != null) return findEnterpriseIdByProjectId(rec.project.id);
-      return '';
-    };
-  
-    this.reports = (this.rs.reports || []).filter((record: Record) => {
-      // ====== fecha válida ======
-      if (!record.created_at) return false;
-    
-      const recordDateString =
-        typeof record.created_at === 'string'
-          ? record.created_at.replace(' ', 'T')
-          : (record as any).created_at;
-    
-      const recordDate = new Date(recordDateString);
-      if (isNaN(recordDate.getTime())) return false;
-    
-      // ====== filtro por Proyecto (solo si hay uno seleccionado) ======
-      if (selProjectId) {
-        if (!record.project || String((record as any).project.id) !== selProjectId) {
-          return false;
-        }
-      }
-    
-      // ====== filtro por Empresa (solo si hay una seleccionada) ======
-      if (selEnterpriseId) {
-        const recEnterpriseId = getRecordEnterpriseId(record);
-        // Si logramos determinar empresa del registro, debe coincidir
-        if (recEnterpriseId && recEnterpriseId !== selEnterpriseId) {
-          return false;
-        }
-        // Si NO logramos determinar empresa del registro, NO lo excluimos (evita falsos negativos).
-        // Esto permite que entren registros huérfanos cuando no traen enterprise, pero si te molesta,
-        // cambia esta lógica para excluirlos cuando no se puede verificar.
-      }
-    
-      // ====== filtro por RANGO DE FECHAS ======
-      if (startDate && recordDate < startDate) return false;
-      if (endDate && recordDate > endDate) return false;
-    
-      return true;
-    });
+  let startDate: Date | undefined;
+  if (this.fechaInicio) {
+    const [y,m,d] = this.fechaInicio.split('-').map(n => parseInt(n, 10));
+    startDate = new Date(y, m - 1, d, 0, 0, 0, 0);
   }
 
+  let endDate: Date | undefined;
+  if (this.fechaFin) {
+    const [y,m,d] = this.fechaFin.split('-').map(n => parseInt(n, 10));
+    endDate = new Date(y, m - 1, d, 23, 59, 59, 999);
+  }
+
+  const selEnterpriseId = this.selectedEnterpriseId ? String(this.selectedEnterpriseId) : '';
+  const selProjectId    = this.selectedProjectId    ? String(this.selectedProjectId)    : '';
+
+  const findEnterpriseIdByProjectId = (projectId: any): string | '' => {
+    const pid = String(projectId ?? '');
+    if (!pid || !Array.isArray(this.rs?.enterprises)) return '';
+    for (const ent of this.rs.enterprises) {
+      if (Array.isArray(ent?.project) && ent.project.some((p: any) => String(p.id) === pid)) {
+        return String(ent.id);
+      }
+    }
+    return '';
+  };
+
+  const getRecordEnterpriseId = (rec: any): string | '' => {
+    if (rec?.enterprise?.id != null) return String(rec.enterprise.id);
+    if (rec?.project?.enterprise_id != null) return String(rec.project.enterprise_id);
+    if (rec?.project?.id != null) return findEnterpriseIdByProjectId(rec.project.id);
+    return '';
+  };
+
+  this.reports = (this.rs.reports || []).filter((record: any) => {
+    const rawDate = record?.completed || record?.created_at;
+    if (!rawDate) return false;
+
+    const recordDate = new Date(
+      (typeof rawDate === 'string') ? rawDate.replace(' ', 'T') : rawDate
+    );
+    if (isNaN(recordDate.getTime())) return false;
+
+    if (selProjectId) {
+      if (!record.project || String(record.project.id) !== selProjectId) return false;
+    }
+
+    if (selEnterpriseId) {
+      const recEnterpriseId = getRecordEnterpriseId(record);
+      if (recEnterpriseId && recEnterpriseId !== selEnterpriseId) return false;
+    }
+
+    if (startDate && recordDate < startDate) return false;
+    if (endDate && recordDate > endDate) return false;
+
+    return true;
+  });
+}
 
   async ionViewWillEnter() {
     await this.rs.loadStorage();
@@ -258,7 +218,7 @@ export class TarjetaMainPage implements OnInit {
     if (this.ns.checkConnection() && userId) {
       this.getGeneralInformation();
     } else {
-      this.reports = this.rs.reports;
+      this.applyDateFilters();
       this.covid_records = this.rs.covid_records;
       this.show_corona_card =
         this.rs.corona_data?.flag_active && !this.rs.corona_data?.flag_done;
@@ -268,7 +228,6 @@ export class TarjetaMainPage implements OnInit {
   onEnterpriseChange() {
     this.enterprise = this.searchEnterpriseById(this.selectedEnterpriseId) || undefined;
     this.projectsForSelected = this.enterprise?.project || [];
-    // Si el proyecto seleccionado ya no pertenece a esta empresa, resetea
     if (!this.projectsForSelected.some(p => String(p.id) === String(this.selectedProjectId))) {
       this.selectedProjectId = '';
       this.project = null;
@@ -469,6 +428,11 @@ export class TarjetaMainPage implements OnInit {
           }
 
           this.rs.saveOfflineData(data);
+
+          this.enterprise = this.searchEnterpriseById(this.selectedEnterpriseId) || undefined;
+          this.projectsForSelected = this.enterprise?.project || [];
+
+          this.applyDateFilters();
 
           this.covid_records = this.rs.covid_records;
 

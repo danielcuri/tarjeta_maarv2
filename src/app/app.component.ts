@@ -3,6 +3,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { Platform } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
+import { UpdateService } from './services/update.service';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -10,7 +11,10 @@ import { Capacitor } from '@capacitor/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor(private platform: Platform) {
+  constructor(private platform: Platform, private updateService: UpdateService) {
+    this.platform.ready().then(() => {
+      this.updateService.checkVersionOnLaunch(); 
+    });
     this.initializeApp();
   }
 

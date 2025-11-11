@@ -20,7 +20,7 @@
 }
 
 .toolbar-tall{
-  --min-height: 60px; /* 80–92px */
+  --min-height: 60px;
   background: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,.08);
   margin-top: 20px;
@@ -38,7 +38,6 @@ ion-back-button::part(icon) {
 .FiltrosLabels{
   margin-bottom: 15px;
 }
-// Agrupa los filtros en una "tarjeta" visual suave
 .filtros-card {
   background: #fff;
   border-radius: 18px;
@@ -50,7 +49,6 @@ ion-back-button::part(icon) {
   gap: 1.1rem;
 }
 
-// Aplica el estilo a los ion-item de los filtros
 .filtros-card ion-item {
   background: transparent !important;
   --background: transparent !important;
@@ -62,7 +60,6 @@ ion-back-button::part(icon) {
   padding-right: 0;
 }
 
-// Label de los campos de filtro
 .FiltrosLabels {
   font-weight: 600;
   color: #2d3436;
@@ -71,7 +68,6 @@ ion-back-button::part(icon) {
   letter-spacing: 0.02em;
 }
 
-// Botón de buscar grande y destacado
 .filtros-card .buscar-btn {
   margin-top: 0.2rem;
   font-weight: 600;
@@ -85,13 +81,11 @@ ion-back-button::part(icon) {
   height: 44px;
 }
 
-// Hace que el botón ocupe todo el ancho del panel
 .filtros-card ion-button.buscar-btn {
   width: 100%;
   display: block;
 }
 
-// Icono de calendario con look moderno
 .transparent-fullwidth-datetime-button {
   width: 100%;
   background: #f4f6fa !important;
@@ -103,18 +97,16 @@ ion-back-button::part(icon) {
   margin-top: 0.13rem;
 }
 
-// Ajusta el espacio inferior de los filtros
 .filtros-card .ion-item:last-child {
   margin-bottom: 0 !important;
 }
 
-// Un poco más de separación en la lista de resultados
 .list_records {
   margin: 2.2rem;
 }
 
 .fab-fix {
-  position: absolute; /* clave con slot=fixed */
+  position: absolute;
   right: 18px;
   bottom: 55px;
   z-index: 11;
@@ -125,7 +117,6 @@ ion-back-button::part(icon) {
   }
 }
 
-/* Estilo del botón (antes lo tenías en .corona_fab ion-fab-button) */
 .fab-fix ion-fab-button {
   --background: #2962ff;
   --background-activated: #0039cb;
@@ -141,7 +132,6 @@ ion-back-button::part(icon) {
   margin-left: 0.5rem;
 }
 
-// Opcional: Cambia el color del FAB para que combine con el look general
 .corona_fab ion-fab-button {
   --background: #2962ff;
   --background-activated: #0039cb;

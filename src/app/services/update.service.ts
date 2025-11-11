@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AlertController, Platform } from '@ionic/angular';
 import { Browser } from '@capacitor/browser';
-import { App } from '@capacitor/app';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
+
 
 type VersionResponse = {
   versionAndroid: string;
@@ -17,7 +17,8 @@ type VersionResponse = {
 export class UpdateService {
   private prompted = false;
   private apiUrl = `${environment.apiUrl}/version`;
-
+  private readonly PLAY_URL = 'https://play.google.com/store/apps/details?id=tarjeta.maar.jjc.simplex';
+  private readonly APPSTORE_URL = 'https://apps.apple.com/pe/app/tarjeta-maar-jjc/id6747202927';
   constructor(
     private http: HttpClient,
     private platform: Platform,
@@ -28,42 +29,40 @@ export class UpdateService {
     if (this.prompted) return;
 
     try {
-      const info = await App.getInfo();        
-      const localVersion = info.version || '0.0.0';
       const isAndroid = this.platform.is('android');
       const isIos     = this.platform.is('ios');
-
+      if (!isAndroid && !isIos) return; 
+      const localVersion = isAndroid ? environment.androidVersion : environment.iosVersion;
       const data = await firstValueFrom(this.http.get<VersionResponse>(this.apiUrl));
 
       const remoteVersion = isAndroid ? data.versionAndroid : isIos ? data.versionIos : null;
-      const storeUrl      = isAndroid ? data.urlAndroid     : data.urlIos;
-
-      console.log('[UpdateService] local:', localVersion, 'remote:', remoteVersion);
 
       if (!remoteVersion) return;
 
       if (!this.isLocalUpToDate(localVersion, remoteVersion)) {
-        this.prompted = true; 
+        this.prompted = true;
+        const storeUrl = this.platform.is('android') ? this.PLAY_URL : this.APPSTORE_URL;
+
         const alert = await this.alertCtrl.create({
           header: 'Actualización disponible',
           message: 'Hay una nueva versión de Tarjeta MAAR. Debes actualizar para continuar.',
           backdropDismiss: false,
           buttons: [
-            {
-              text: 'Actualizar',
-              handler: async () => {
-                try { await Browser.open({ url: storeUrl }); } catch {}
-              }
-            }
-          ]
-        });
+          {
+            text: 'Actualizar',
+            handler: async () => {
+              await Browser.open({ url: storeUrl });
+            },
+          },
+        ],
+      });
         await alert.present();
       }
     } catch (e) {
       console.warn('[UpdateService] Error verificando versión:', e);
     }
   }
-
+ 
   private isLocalUpToDate(local: string, remote: string): boolean {
     const L = local.split('.').map(n => parseInt(n, 10));
     const R = remote.split('.').map(n => parseInt(n, 10));
@@ -72,6 +71,6 @@ export class UpdateService {
       if (lv < rv) return false; 
       if (lv > rv) return true; 
     }
-    return true;
+    return true; // iguales
   }
 }

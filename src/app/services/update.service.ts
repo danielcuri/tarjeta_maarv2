@@ -3,11 +3,20 @@ import { AlertController, Platform } from '@ionic/angular';
 import { Browser } from '@capacitor/browser';
 import { App } from '@capacitor/app';
 import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
+
+type VersionResponse = {
+  versionAndroid: string;
+  versionIos: string;
+  urlAndroid: string;
+  urlIos: string;
+};
 
 @Injectable({ providedIn: 'root' })
 export class UpdateService {
   private prompted = false;
-  private apiUrl = 'https://tu-backend.com/version'; // <-- cambia a tu endpoint real
+  private apiUrl = `${environment.apiUrl}/version`;
 
   constructor(
     private http: HttpClient,
@@ -17,61 +26,52 @@ export class UpdateService {
 
   async checkVersionOnLaunch() {
     if (this.prompted) return;
-    this.prompted = true;
 
     try {
-      const info = await App.getInfo();
-      const localVersion = info.version;
+      const info = await App.getInfo();        
+      const localVersion = info.version || '0.0.0';
       const isAndroid = this.platform.is('android');
-      const isIos = this.platform.is('ios');
+      const isIos     = this.platform.is('ios');
 
-      // 1️⃣ Llama al backend
-      const data: any = await this.http.get(this.apiUrl).toPromise();
+      const data = await firstValueFrom(this.http.get<VersionResponse>(this.apiUrl));
 
-      const remoteVersion = isAndroid
-        ? data.versionAndroid
-        : isIos
-        ? data.versionIos
-        : null;
-      const storeUrl = isAndroid ? data.urlAndroid : data.urlIos;
+      const remoteVersion = isAndroid ? data.versionAndroid : isIos ? data.versionIos : null;
+      const storeUrl      = isAndroid ? data.urlAndroid     : data.urlIos;
+
+      console.log('[UpdateService] local:', localVersion, 'remote:', remoteVersion);
 
       if (!remoteVersion) return;
 
-      // 2️⃣ Compara versiones
-      const isUpToDate = this.compareVersions(localVersion, remoteVersion);
-      if (!isUpToDate) {
+      if (!this.isLocalUpToDate(localVersion, remoteVersion)) {
+        this.prompted = true; 
         const alert = await this.alertCtrl.create({
           header: 'Actualización disponible',
-          message:
-            'Hay una nueva versión de Tarjeta MAAR. Actualiza para seguir disfrutando de todas las funciones.',
+          message: 'Hay una nueva versión de Tarjeta MAAR. Debes actualizar para continuar.',
           backdropDismiss: false,
           buttons: [
             {
               text: 'Actualizar',
               handler: async () => {
-                await Browser.open({ url: storeUrl });
-              },
-            },
-          ],
+                try { await Browser.open({ url: storeUrl }); } catch {}
+              }
+            }
+          ]
         });
         await alert.present();
       }
-    } catch (error) {
-      console.warn('Error verificando versión:', error);
+    } catch (e) {
+      console.warn('[UpdateService] Error verificando versión:', e);
     }
   }
 
-  // Simple comparador de versiones "1.3.0" vs "1.4.0"
-  private compareVersions(local: string, remote: string): boolean {
-    const l = local.split('.').map(Number);
-    const r = remote.split('.').map(Number);
-
-    for (let i = 0; i < Math.max(l.length, r.length); i++) {
-      const lv = l[i] || 0;
-      const rv = r[i] || 0;
-      if (lv < rv) return false; // local es menor
-      if (lv > rv) return true;  // local es mayor (probablemente build interna)
+  private isLocalUpToDate(local: string, remote: string): boolean {
+    const L = local.split('.').map(n => parseInt(n, 10));
+    const R = remote.split('.').map(n => parseInt(n, 10));
+    for (let i = 0; i < Math.max(L.length, R.length); i++) {
+      const lv = L[i] ?? 0, rv = R[i] ?? 0;
+      if (lv < rv) return false; 
+      if (lv > rv) return true; 
     }
-    return true; // iguales
+    return true;
   }
 }

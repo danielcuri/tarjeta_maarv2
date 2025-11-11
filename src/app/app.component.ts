@@ -11,15 +11,14 @@ import { UpdateService } from './services/update.service';
   standalone: false,
 })
 export class AppComponent {
-  constructor(private platform: Platform, private updateService: UpdateService) {
-    this.platform.ready().then(() => {
-      this.updateService.checkVersionOnLaunch(); 
-    });
-    this.initializeApp();
+  constructor(private platform: Platform, private update: UpdateService) {
+    this.bootstrap();
   }
 
-  private async initializeApp() {
+  private async bootstrap() {
     await this.platform.ready();
+
+    await this.update.checkVersionOnLaunch();
 
     document.body.classList.remove('dark');
     document.documentElement.classList.remove('ion-palette-dark');

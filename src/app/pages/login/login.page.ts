@@ -65,7 +65,7 @@ export class LoginPage implements OnInit {
       })
       .subscribe(async (data) => {
         this.loading.dismiss();
-
+        console.log("DATAAAAAAA:",data)
         console.log(data.type);
         if (data.type == 0) {
           localStorage.setItem(

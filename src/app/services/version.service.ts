@@ -13,8 +13,8 @@ import { environment } from 'src/environments/environment';
 export class VersionService {
   api_version_flag = false;
   data_version_obj: VersionAnswer | undefined;
-  link_android = '';
-  link_ios = '';
+  link_android = 'https://play.google.com/store/apps/details?id=tarjeta.maar.jjc.simplex';
+  link_ios = 'https://apps.apple.com/pe/app/tarjeta-maar-jjc/id6747202927';
   constructor(
     private qs: QueryService,
     private navCtrl: NavController,

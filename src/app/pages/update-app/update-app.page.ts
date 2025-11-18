@@ -10,8 +10,8 @@ import { Browser } from '@capacitor/browser';
 })
 export class UpdateAppPage implements OnInit {
   constructor(
-    private platform: Platform,
-    private vs: VersionService,
+    public platform: Platform,
+    public vs: VersionService,
     private navCtrl: NavController
   ) {}
 

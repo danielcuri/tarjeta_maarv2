@@ -28,7 +28,8 @@ export class DocumentsMainPage implements OnInit {
 
   filetypes: FileType[] = [];
   docs: any[] = [];
-
+  isDoctor = false;
+  private meId: number | null = null;
   page = 1;
   limit = 20; 
   hasMore = true;
@@ -43,6 +44,13 @@ export class DocumentsMainPage implements OnInit {
 
   ngOnInit() {
     this.loadTypes();
+    const rolesRaw = (this.us?.user?.roles ?? []) as Array<number | { id: number }>;
+    const roleIds: number[] = rolesRaw
+      .map((r) => (typeof r === 'number' ? r : Number(r.id)))
+      .filter((n: number): n is number => Number.isFinite(n));
+
+    this.isDoctor = roleIds.includes(4);  
+    this.meId = this.us?.user?.id ?? null;
     this.fetch(true);
   }
 
@@ -74,41 +82,50 @@ export class DocumentsMainPage implements OnInit {
   }
 
   private buildFilterArray() {
-    const f: any[] = [];
+  const f: any[] = [];
 
-    if (this.selectedTypeId !== '' && this.selectedTypeId !== null) {
-      f.push({
-        keyContains: 'filetypeId',
-        key: 'equals',
-        value: Number(this.selectedTypeId),
-      });
-    }
-
-    if (this.fechaInicio) {
-      f.push({
-        keyContains: 'created_at',
-        key: 'gte',
-        value: this.startOfDayISO(this.fechaInicio),
-      });
-    }
-    if (this.fechaFin) {
-      f.push({
-        keyContains: 'created_at',
-        key: 'lte',
-        value: this.endOfDayISO(this.fechaFin),
-      });
-    }
-
-    if (this.searchText?.trim()) {
-      f.push({
-        keyContains: 'name',
-        key: 'contains',
-        value: this.searchText.trim(),
-      });
-    }
-
-    return f;
+  if (this.selectedTypeId !== '' && this.selectedTypeId !== null) {
+    f.push({
+      keyContains: 'filetypeId',
+      key: 'equals',
+      value: Number(this.selectedTypeId),
+    });
   }
+
+  if (this.fechaInicio) {
+    f.push({
+      keyContains: 'created_at',
+      key: 'gte',
+      value: this.startOfDayISO(this.fechaInicio),
+    });
+  }
+
+  if (this.fechaFin) {
+    f.push({
+      keyContains: 'created_at',
+      key: 'lte',
+      value: this.endOfDayISO(this.fechaFin),
+    });
+  }
+
+  if (this.searchText?.trim()) {
+    f.push({
+      keyContains: 'name',
+      key: 'contains',
+      value: this.searchText.trim(),
+    });
+  }
+
+  if (!this.isDoctor && this.meId != null) {
+    f.push({
+      keyContains: 'user.id',
+      key: 'equals',
+      value: this.meId,
+    });
+  }
+
+  return f;
+}
 
   private fetch(reset = false) {
     if (this.loading) return;
@@ -133,7 +150,8 @@ export class DocumentsMainPage implements OnInit {
       next: (res: any) => {
         const rows = res?.data?.rows ?? res?.rows ?? [];
         const meta = res?.data?.responseFilter ?? res?.responseFilter;
-
+        
+        console.log("filas",rows)
         this.docs = reset ? rows : [...this.docs, ...rows];
 
         if (meta) {

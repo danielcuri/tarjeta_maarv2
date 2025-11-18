@@ -33,16 +33,19 @@ export class UpdateService {
       const isIos     = this.platform.is('ios');
       if (!isAndroid && !isIos) return; 
       const localVersion = isAndroid ? environment.androidVersion : environment.iosVersion;
+      console.log("ENTRA: ", localVersion)
       const data = await firstValueFrom(this.http.get<VersionResponse>(this.apiUrl));
 
       const remoteVersion = isAndroid ? data.versionAndroid : isIos ? data.versionIos : null;
+
+      console.log("URL: ", remoteVersion)
 
       if (!remoteVersion) return;
 
       if (!this.isLocalUpToDate(localVersion, remoteVersion)) {
         this.prompted = true;
         const storeUrl = this.platform.is('android') ? this.PLAY_URL : this.APPSTORE_URL;
-
+        console.log("TIENDA: ", storeUrl)
         const alert = await this.alertCtrl.create({
           header: 'Actualización disponible',
           message: 'Hay una nueva versión de Tarjeta MAAR. Debes actualizar para continuar.',

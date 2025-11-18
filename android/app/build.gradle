@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     namespace "tarjeta.maar.jjc.simplex"
     compileSdk rootProject.ext.compileSdkVersion
+    ndkVersion "29.0.14206865"
     defaultConfig {
         applicationId "tarjeta.maar.jjc.simplex"
         minSdkVersion rootProject.ext.minSdkVersion

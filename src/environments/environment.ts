@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
-  //apiUrl: 'https://ssomac.jjc.com.pe/api',
-  apiUrl: 'http://localhost:4500',
+  apiUrl: 'https://ssomac.jjc.com.pe/api',
+  //apiUrl: 'http://localhost:4500',
   androidVersion: '1.0.5',
-  iosVersion: '1.0.4',
+  iosVersion: '1.0.5',
 };
 
 /*

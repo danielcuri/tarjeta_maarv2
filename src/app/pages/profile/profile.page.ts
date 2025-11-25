@@ -3,6 +3,7 @@ import { NavController } from '@ionic/angular';
 import { LoadingService } from 'src/app/services/loading.service';
 import { NetworkService } from 'src/app/services/network.service';
 import { UserService } from 'src/app/services/user.service';
+import { AlertCtrlService } from 'src/app/services/alert-ctrl.service';
 
 @Component({
   selector: 'app-profile',
@@ -11,11 +12,18 @@ import { UserService } from 'src/app/services/user.service';
   standalone: false,
 })
 export class ProfilePage implements OnInit {
+
+  isDeleteModalOpen = false;
+  deleteCountdown = 5;
+  deleteButtonDisabled = true;
+  private deleteInterval: any;
+
   constructor(
     private loading: LoadingService,
     public us: UserService,
     private navCtrl: NavController,
-    private ns: NetworkService
+    private ns: NetworkService,
+    private alertCtrl: AlertCtrlService
   ) {}
 
   ngOnInit() {}
@@ -37,6 +45,81 @@ export class ProfilePage implements OnInit {
       (err) => {
         this.loading.dismiss();
         console.log(err);
+      }
+    );
+  }
+
+  openDeleteModal() {
+    this.isDeleteModalOpen = true;
+    this.startDeleteCountdown();
+  }
+
+  onDeleteModalDismiss() {
+    this.isDeleteModalOpen = false;
+    this.resetDeleteCountdown();
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.resetDeleteCountdown();
+  }
+
+  private startDeleteCountdown() {
+    this.resetDeleteCountdown();
+    this.deleteButtonDisabled = true;
+    this.deleteCountdown = 5;
+
+    this.deleteInterval = setInterval(() => {
+      this.deleteCountdown--;
+
+      if (this.deleteCountdown <= 0) {
+        this.deleteButtonDisabled = false;
+        clearInterval(this.deleteInterval);
+        this.deleteInterval = null;
+      }
+    }, 1000);
+  }
+
+  private resetDeleteCountdown() {
+    if (this.deleteInterval) {
+      clearInterval(this.deleteInterval);
+      this.deleteInterval = null;
+    }
+    this.deleteCountdown = 5;
+    this.deleteButtonDisabled = true;
+  }
+
+  confirmDeleteAccount() {
+    const userId = this.us.user?.id;
+
+    if (!userId) {
+      this.alertCtrl.present('Error', 'No se encontró información del usuario en sesión.');
+      return;
+    }
+
+    if (!this.ns.checkConnection()) {
+      this.alertCtrl.present(
+        'Error',
+        'No se pudo eliminar la cuenta en línea. Verifica tu conexión a internet.'
+      );
+      return;
+    }
+
+    this.loading.present();
+    this.us.deleteAccount(userId).subscribe(
+      (data) => {
+        this.loading.dismiss();
+        this.closeDeleteModal();
+        this.us.clearAll();
+        this.navCtrl.navigateRoot('/login');
+      },
+      (err) => {
+        this.loading.dismiss();
+        console.log(err);
+        this.alertCtrl.present(
+          'Error',
+          'Ocurrió un problema al eliminar la cuenta. Intenta nuevamente.'
+        );
       }
     );
   }

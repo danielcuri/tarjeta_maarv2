@@ -61,6 +61,10 @@ export class UserService {
     return this.qs.executeQuery<Simple>('post', '/logout', {});
   }
 
+  deleteAccount(id: number) {
+    return this.qs.executeQuery<Simple>('delete', `/user/${id}`, {});
+  }
+
   async checkUser() {
     await this.loadStorage();
 

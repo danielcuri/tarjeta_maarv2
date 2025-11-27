@@ -1,15 +1,13 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'tarjeta.maar.jjc.simplex',
-  appName: 'Tarjeta Maar - JJC',
+  appId: 'tarjeta.maar.jjc',
+  appName: 'Tarjeta MAAR - JJC',
   webDir: 'www',
-  plugins: {
-    StatusBar: {
-      overlaysWebView: false,
-      style: 'DARK', 
-      backgroundColor: '#ffffff',
-    }
+  server: {
+    androidScheme: 'https',
+    iosScheme:'https',
+    cleartext: true,
   }
 };
 

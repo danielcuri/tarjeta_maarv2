@@ -39,8 +39,7 @@ export class ProfilePage implements OnInit {
     this.us.logout().subscribe(
       (data) => {
         this.loading.dismiss();
-        this.us.clearAll();
-        this.navCtrl.navigateRoot('/login');
+        this.goToLoginAndClear();
       },
       (err) => {
         this.loading.dismiss();
@@ -89,38 +88,49 @@ export class ProfilePage implements OnInit {
     this.deleteButtonDisabled = true;
   }
 
+  private goToLoginAndClear() {
+    this.us.clearAll();
+    this.navCtrl.navigateRoot('/login');
+  }
+
   confirmDeleteAccount() {
-    const userId = this.us.user?.id;
+  const userId = this.us.user?.id;
 
-    if (!userId) {
-      this.alertCtrl.present('Error', 'No se encontró información del usuario en sesión.');
-      return;
-    }
+  if (!userId) {
+    this.alertCtrl.present('Error', 'No se encontró información del usuario en sesión.');
+    return;
+  }
 
-    if (!this.ns.checkConnection()) {
+  if (!this.ns.checkConnection()) {
+    this.alertCtrl.present(
+      'Error',
+      'No se pudo eliminar la cuenta en línea. Verifica tu conexión a internet.'
+    );
+    return;
+  }
+
+  this.loading.present();
+  this.us.deleteAccount(userId).subscribe(
+    (data) => {
+      this.loading.dismiss();
+
+      this.isDeleteModalOpen = false;
+      this.resetDeleteCountdown();
+
+      this.us.clearAll();
+
+      setTimeout(() => {
+        this.navCtrl.navigateRoot('/login');
+      }, 50);
+    },
+    (err) => {
+      this.loading.dismiss();
+      console.log(err);
       this.alertCtrl.present(
         'Error',
-        'No se pudo eliminar la cuenta en línea. Verifica tu conexión a internet.'
+        'Ocurrió un problema al eliminar la cuenta. Intenta nuevamente.'
       );
-      return;
     }
-
-    this.loading.present();
-    this.us.deleteAccount(userId).subscribe(
-      (data) => {
-        this.loading.dismiss();
-        this.closeDeleteModal();
-        this.us.clearAll();
-        this.navCtrl.navigateRoot('/login');
-      },
-      (err) => {
-        this.loading.dismiss();
-        console.log(err);
-        this.alertCtrl.present(
-          'Error',
-          'Ocurrió un problema al eliminar la cuenta. Intenta nuevamente.'
-        );
-      }
-    );
-  }
+  );
+}
 }

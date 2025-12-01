@@ -191,7 +191,6 @@ export class RecordPage implements OnInit {
   }
 
   registerCanvasEvents(canvas: HTMLCanvasElement): void {
-    // Mouse
     canvas.addEventListener('mousedown', (e) => {
       this.isDrawing = true;
       this.ctx.beginPath();
@@ -207,10 +206,9 @@ export class RecordPage implements OnInit {
     canvas.addEventListener('mouseup', () => {
       this.isDrawing = false;
       this.ctx.closePath();
-      this.savePad(); // captura
+      this.savePad(); 
     });
 
-    // Touch
     canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
       const touch = e.touches[0];
@@ -454,6 +452,9 @@ export class RecordPage implements OnInit {
       }
     }
   }
+  goBack(){
+    this.navCtrl.back();
+  }
 
   async saveReport() {
     this.reportData.disciplines = this.disciplines_model[0]
@@ -509,7 +510,23 @@ export class RecordPage implements OnInit {
       }
 
       const resp = await firstValueFrom(this.rs.saveReport(this.reportData));
+
       if (!resp.error) {
+        const userId = this.us.user?.id;
+        if (userId) {
+          try {
+            const generalRes: any = await firstValueFrom(
+              this.rs.getGeneralInformation(userId)
+            );
+            const generalData = generalRes?.data ?? generalRes;
+            if (generalData) {
+              this.rs.saveOfflineData(generalData);
+            }
+          } catch (e) {
+            console.log('Error refrescando información general', e);
+          }
+        }
+      
         await this.presentToastWithOptions();
         this.resetForm();
         await this.goBackAfterSuccess();

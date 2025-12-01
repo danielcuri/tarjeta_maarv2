@@ -365,43 +365,48 @@ export class TarjetaMainPage implements OnInit {
   }
 
   deleteRecord(item: any, i: any) {
-    if (this.ns.checkConnection()) {
-      if (item.id) {
-        let data_delete = {
-          id: item.id,
-        };
-        this.loading.present();
-        this.rs.deleteReport(data_delete).subscribe(
-          (data) => {
-            this.loading.dismiss();
-            this.rs.saveOfflineData(data);
-            this.reports = this.rs.reports;
-            this.alertCtrl.present('JJC', data.message);
-          },
-          (err) => {
-            this.loading.dismiss();
-            this.alertCtrl.present(
-              'Error',
-              'No se pudo eliminar el registro en línea.'
-            );
-          }
-        );
-      }
-      return;
-    }
+  if (this.ns.checkConnection()) {
+    if (item.id) {
+      this.loading.present();
 
-    if (!item.id) {
-      this.rs.reports.splice(i, 1);
-      this.reports = this.rs.reports;
-      this.rs.saveData();
-      return;
-    }
+      this.rs.deleteReport(item.id).subscribe(
+        (res) => {
+          this.loading.dismiss();
 
-    this.rs.deleted.push(item.id);
+          this.rs.reports = (this.rs.reports || []).filter(
+            (r: any) => r.id !== item.id
+          );
+
+          this.rs.saveData();
+
+          this.applyDateFilters();
+
+          this.alertCtrl.present('JJC', res.message || 'Registro eliminado');
+        },
+        (err) => {
+          this.loading.dismiss();
+          this.alertCtrl.present(
+            'Error',
+            'No se pudo eliminar el registro en línea.'
+          );
+        }
+      );
+    }
+    return;
+  }
+
+  if (!item.id) {
     this.rs.reports.splice(i, 1);
     this.reports = this.rs.reports;
     this.rs.saveData();
+    return;
   }
+
+  this.rs.deleted.push(item.id);
+  this.rs.reports.splice(i, 1);
+  this.reports = this.rs.reports;
+  this.rs.saveData();
+}
 
   async getInfo(
     userId: number,

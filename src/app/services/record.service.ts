@@ -108,11 +108,11 @@ getFiletypes(params: any = {}) {
     return this.query.executeQuery<Simple>('post', '/record', report);
   }
 
-  deleteReport(report: any) {
+  deleteReport(userId: number) {
     return this.query.executeQuery<OfflineGeneral>(
-      'post',
-      '/deleteReport',
-      report
+      'delete',
+      `/record/${userId}`,
+      {}
     );
   }
 

@@ -443,6 +443,9 @@ export class RecordPage implements OnInit {
 
   drawStart(event: MouseEvent | Touch) {}
 
+  goBack(){
+    this.navCtrl.back();
+  }
   manageChk(event: any) {
     let d = event.detail;
     if (d.checked) {
@@ -499,34 +502,51 @@ export class RecordPage implements OnInit {
     this.reportData.longitude = this.ls.current_location.longitude;
     this.reportData.projectId = this.selectedProjectId as number;
     this.loading.present();
-    try {
-      if (!this.ns.checkConnection()) {
-        this.rs.saveRecordLocally(this.reportData);
-        await this.presentToastWithOptions();
-        this.resetForm();
-        await this.goBackAfterSuccess();
-        return;
-      }
+try {
+  if (!this.ns.checkConnection()) {
+    // Rama OFFLINE se queda igual
+    this.rs.saveRecordLocally(this.reportData);
+    await this.presentToastWithOptions();
+    this.resetForm();
+    await this.goBackAfterSuccess();
+    return;
+  }
 
-      const resp = await firstValueFrom(this.rs.saveReport(this.reportData));
-      if (!resp.error) {
-        await this.presentToastWithOptions();
-        this.resetForm();
-        await this.goBackAfterSuccess();
-      } else {
-        this.alertCtrl.present(
-          'JJC',
-          resp.msg || 'Ocurrió un error al registrar.'
+  const resp = await firstValueFrom(this.rs.saveReport(this.reportData));
+
+  if (!resp.error) {
+    const userId = this.us.user?.id;
+    if (userId) {
+      try {
+        const generalRes: any = await firstValueFrom(
+          this.rs.getGeneralInformation(userId)
         );
+        const generalData = generalRes?.data ?? generalRes;
+        if (generalData) {
+          this.rs.saveOfflineData(generalData);
+        }
+      } catch (e) {
+        console.log('Error refrescando información general', e);
       }
-    } catch (error) {
-      this.rs.saveRecordLocally(this.reportData);
-      await this.presentToastWithOptions();
-      this.resetForm();
-      await this.goBackAfterSuccess();
-    } finally {
-      await this.loading.dismiss();
     }
+
+    await this.presentToastWithOptions();
+    this.resetForm();
+    await this.goBackAfterSuccess();
+  } else {
+    this.alertCtrl.present(
+      'JJC',
+      resp.msg || 'Ocurrió un error al registrar.'
+    );
+  }
+} catch (error) {
+  this.rs.saveRecordLocally(this.reportData);
+  await this.presentToastWithOptions();
+  this.resetForm();
+  await this.goBackAfterSuccess();
+} finally {
+  await this.loading.dismiss();
+}
   }
   private createInitialReportData() {
     return {

@@ -6,7 +6,7 @@ import {
   NavController,
   Platform,
 } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { Subscription, firstValueFrom } from 'rxjs';
 import { Enterprise, Project } from 'src/app/interfaces/enterprise';
 import { AlertCtrlService } from 'src/app/services/alert-ctrl.service';
 import { LoadingService } from 'src/app/services/loading.service';
@@ -102,7 +102,25 @@ export class MainPage implements OnInit {
   ngOnDestroy() {
     this.networkSubscription.unsubscribe();
   }
-  goTarjetaMain() {
+  async goTarjetaMain() {
+    const userId = this.us.user?.id;
+    
+    if (this.ns.checkConnection() && userId) {
+      try {
+        const generalRes: any = await firstValueFrom(
+          this.rs.getGeneralInformation(userId)
+        );
+      
+        const generalData = generalRes?.data ?? generalRes;
+      
+        if (generalData) {
+          this.rs.saveOfflineData(generalData);
+        }
+      } catch (e) {
+        console.error('Error actualizando info antes de ir a Tarjeta MAAR', e);
+      }
+    }
+  
     this.router.navigate(['/tarjeta-main', {}]);
   }
   goNotification() {

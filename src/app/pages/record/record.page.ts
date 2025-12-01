@@ -504,7 +504,6 @@ export class RecordPage implements OnInit {
     this.loading.present();
 try {
   if (!this.ns.checkConnection()) {
-    // Rama OFFLINE se queda igual
     this.rs.saveRecordLocally(this.reportData);
     await this.presentToastWithOptions();
     this.resetForm();

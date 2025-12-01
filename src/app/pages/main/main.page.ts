@@ -396,7 +396,7 @@ goDocuments() {
           id: item.id,
         };
         this.loading.present();
-        this.rs.deleteReport(data_delete).subscribe(
+        this.rs.deleteReport(data_delete.id).subscribe(
           (data) => {
             this.loading.dismiss();
             this.rs.saveOfflineData(data);

@@ -33,7 +33,9 @@
               [(ngModel)]="selectedEnterpriseId"
               (ionChange)="onEnterpriseChange()"
               [disabled]="edit"
-              interface="popover"
+              interface="action-sheet"
+              cancelText="Cancelar"
+              okText="Ok"
               placeholder="Selecciona una empresa"
             >
               <ion-select-option *ngFor="let e of enterprises" [value]="e.id">
@@ -42,14 +44,15 @@
             </ion-select>
           </ion-item>
           
-          <!-- Proyecto -->
           <ion-item class="ion-margin-bottom ion-margin-top">
             <ion-label position="stacked">Proyecto</ion-label>
             <ion-select
               [(ngModel)]="selectedProjectId"
               (ionChange)="onProjectChange()"
               [disabled]="edit || !projects.length"
-              interface="popover"
+              interface="action-sheet"
+              cancelText="Cancelar"
+              okText="Ok"
               placeholder="Selecciona un proyecto"
             >
               <ion-select-option *ngFor="let p of projects" [value]="p.id">
@@ -57,6 +60,7 @@
               </ion-select-option>
             </ion-select>
           </ion-item>
+
           <ion-item class="ion-margin-bottom">
               <ion-label position="stacked">Nombre y apellidos</ion-label>
               <ion-input type="text" [(ngModel)]="reportData.worker_fullname" [disabled]="edit"></ion-input>

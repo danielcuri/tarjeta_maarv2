@@ -15,6 +15,10 @@ import { RecordService } from 'src/app/services/record.service';
   standalone: false,
 })
 export class LoginPage implements OnInit {
+  showPassword = false;
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
   userData = {
     document: '',
     password: '',

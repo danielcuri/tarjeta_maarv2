@@ -20,15 +20,25 @@
           ></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked" [ngStyle]="{color: color}"
-            >Contraseña</ion-label
-          >
+          <ion-label position="stacked" [ngStyle]="{color: color}">
+            Contraseña
+          </ion-label>
+        
           <ion-input
-            name="password"
-            [(ngModel)]="userData.password"
-            type="password"
-            [ngStyle]="{color: color}"
-          ></ion-input>
+          name="password"
+          [(ngModel)]="userData.password"
+          [type]="showPassword ? 'text' : 'password'"
+          [ngStyle]="{color: color}"
+          [clearOnEdit]="false"
+          autocomplete="off"
+        ></ion-input>
+        
+          <ion-button fill="clear" slot="end" (click)="togglePassword()">
+            <ion-icon
+              [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+              [ngStyle]="{color: color}"
+            ></ion-icon>
+          </ion-button>
         </ion-item>
         <ion-item lines="none">
           <ion-button type="submit" class="gradient">Ingresar</ion-button>

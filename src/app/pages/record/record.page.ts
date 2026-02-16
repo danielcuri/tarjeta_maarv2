@@ -37,6 +37,8 @@ export class RecordPage implements OnInit {
   enterprise: Enterprise | undefined = undefined;
   enterprises: Enterprise[] = [];
   projects: Project[] = [];
+  notifyEmails: string[] = [''];
+  private readonly emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   selectedEnterpriseId: number | '' = '';
   selectedProjectId: number | '' = '';
@@ -183,15 +185,73 @@ export class RecordPage implements OnInit {
         (this.us.user?.roles?.[0]?.pivot?.user_id || '');
       this.reportData.userId = this.us.user.id;
       this.initEmptyModels();
+      this.initNotifyEmailsFromString(this.reportData.notify_email);
     }
   }
   initEmptyModels() {
     this.risks_model = new Array(this.rs.risks.length).fill(false);
     this.disciplines_model = [false];
   }
+  private cleanupNotifyEmails(): void {
+    if (!Array.isArray(this.notifyEmails) || this.notifyEmails.length === 0) {
+      this.notifyEmails = [''];
+      return;
+    }
+  
+    while (this.notifyEmails.length > 1) {
+      const last = (this.notifyEmails[this.notifyEmails.length - 1] ?? '').trim();
+      const prev = (this.notifyEmails[this.notifyEmails.length - 2] ?? '').trim();
+      if (last === '' && prev === '') this.notifyEmails.pop();
+      else break;
+    }
+  }
+  
+  private initNotifyEmailsFromString(raw: any): void {
+    const parts = String(raw ?? '')
+      .split(';')
+      .map(s => s.trim())
+      .filter(Boolean);
+  
+    this.notifyEmails = parts.length ? parts : [''];
+  
+    if (!this.edit) {
+      this.cleanupNotifyEmails();
+      const last = (this.notifyEmails[this.notifyEmails.length - 1] ?? '').trim();
+      if (last !== '') this.notifyEmails.push('');
+    }
+  
+    this.cleanupNotifyEmails();
+  }
+  
+  onNotifyEmailInput(i: number): void {
+    if (!Array.isArray(this.notifyEmails) || this.notifyEmails.length === 0) {
+      this.notifyEmails = [''];
+    }
+  
+    this.notifyEmails[i] = String(this.notifyEmails[i] ?? '');
+    this.cleanupNotifyEmails();
+  
+    const isLast = i === this.notifyEmails.length - 1;
+    const hasText = (this.notifyEmails[i] ?? '').trim() !== '';
+  
+    if (isLast && hasText) {
+      this.notifyEmails.push('');
+    }
+  
+    this.cleanupNotifyEmails();
+  }
+  
+  private getNotifyEmailsClean(): string[] {
+    return (this.notifyEmails || [])
+      .map(e => String(e ?? '').trim())
+      .filter(Boolean);
+  }
+  
+  private getNotifyEmailString(): string {
+    return this.getNotifyEmailsClean().join(';');
+  }
 
   registerCanvasEvents(canvas: HTMLCanvasElement): void {
-    // Mouse
     canvas.addEventListener('mousedown', (e) => {
       this.isDrawing = true;
       this.ctx.beginPath();
@@ -207,10 +267,9 @@ export class RecordPage implements OnInit {
     canvas.addEventListener('mouseup', () => {
       this.isDrawing = false;
       this.ctx.closePath();
-      this.savePad(); // captura
+      this.savePad(); 
     });
 
-    // Touch
     canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
       const touch = e.touches[0];
@@ -349,6 +408,7 @@ export class RecordPage implements OnInit {
     this.rs.getDetail(recordId).subscribe({
       next: (response) => {
         this.reportData = response.record;
+        this.initNotifyEmailsFromString(this.reportData.notify_email);
         this.project = response.record.project;
 
         const enterpriseIdRaw =
@@ -404,6 +464,10 @@ export class RecordPage implements OnInit {
     });
   }
 
+  trackByNotifyEmailIndex(index: number, _item: any) {
+    return index;
+  }
+
   fillRisks() {
     for (let index = 0; index < this.rs.risks.length; index++) {
       const element = this.rs.risks[index];
@@ -443,9 +507,6 @@ export class RecordPage implements OnInit {
 
   drawStart(event: MouseEvent | Touch) {}
 
-  goBack(){
-    this.navCtrl.back();
-  }
   manageChk(event: any) {
     let d = event.detail;
     if (d.checked) {
@@ -456,6 +517,9 @@ export class RecordPage implements OnInit {
         this.reportData.risks.splice(i, 1);
       }
     }
+  }
+  goBack(){
+    this.navCtrl.back();
   }
 
   async saveReport() {
@@ -486,10 +550,13 @@ export class RecordPage implements OnInit {
         c_msg += "Debes subir foto número 2. "
     } */
 
-    const email = (this.reportData.notify_email || '').trim();
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!isEmail) {
-      c_msg += 'Ingresa un correo válido para notificar. ';
+    this.reportData.notify_email = this.getNotifyEmailString();
+
+    const emails = this.getNotifyEmailsClean();
+    const invalid = emails.filter(e => !this.emailRegex.test(e));
+
+    if (emails.length === 0 || invalid.length > 0) {
+      c_msg += 'Ingresa uno o más correos válidos para notificar. ';
     }
 
     if (c_msg != '') {
@@ -502,50 +569,50 @@ export class RecordPage implements OnInit {
     this.reportData.longitude = this.ls.current_location.longitude;
     this.reportData.projectId = this.selectedProjectId as number;
     this.loading.present();
-try {
-  if (!this.ns.checkConnection()) {
-    this.rs.saveRecordLocally(this.reportData);
-    await this.presentToastWithOptions();
-    this.resetForm();
-    await this.goBackAfterSuccess();
-    return;
-  }
-
-  const resp = await firstValueFrom(this.rs.saveReport(this.reportData));
-
-  if (!resp.error) {
-    const userId = this.us.user?.id;
-    if (userId) {
-      try {
-        const generalRes: any = await firstValueFrom(
-          this.rs.getGeneralInformation(userId)
-        );
-        const generalData = generalRes?.data ?? generalRes;
-        if (generalData) {
-          this.rs.saveOfflineData(generalData);
-        }
-      } catch (e) {
-        console.log('Error refrescando información general', e);
+    try {
+      if (!this.ns.checkConnection()) {
+        this.rs.saveRecordLocally(this.reportData);
+        await this.presentToastWithOptions();
+        this.resetForm();
+        await this.goBackAfterSuccess();
+        return;
       }
-    }
 
-    await this.presentToastWithOptions();
-    this.resetForm();
-    await this.goBackAfterSuccess();
-  } else {
-    this.alertCtrl.present(
-      'JJC',
-      resp.msg || 'Ocurrió un error al registrar.'
-    );
-  }
-} catch (error) {
-  this.rs.saveRecordLocally(this.reportData);
-  await this.presentToastWithOptions();
-  this.resetForm();
-  await this.goBackAfterSuccess();
-} finally {
-  await this.loading.dismiss();
-}
+      const resp = await firstValueFrom(this.rs.saveReport(this.reportData));
+
+      if (!resp.error) {
+        const userId = this.us.user?.id;
+        if (userId) {
+          try {
+            const generalRes: any = await firstValueFrom(
+              this.rs.getGeneralInformation(userId)
+            );
+            const generalData = generalRes?.data ?? generalRes;
+            if (generalData) {
+              this.rs.saveOfflineData(generalData);
+            }
+          } catch (e) {
+            console.log('Error refrescando información general', e);
+          }
+        }
+      
+        await this.presentToastWithOptions();
+        this.resetForm();
+        await this.goBackAfterSuccess();
+      } else {
+        this.alertCtrl.present(
+          'JJC',
+          resp.msg || 'Ocurrió un error al registrar.'
+        );
+      }
+    } catch (error) {
+      this.rs.saveRecordLocally(this.reportData);
+      await this.presentToastWithOptions();
+      this.resetForm();
+      await this.goBackAfterSuccess();
+    } finally {
+      await this.loading.dismiss();
+    }
   }
   private createInitialReportData() {
     return {
@@ -595,6 +662,7 @@ try {
     this.disciplines_model = [false];
     this.reportData.url_front = null;
     this.reportData.url_back = null;
+    this.notifyEmails = [''];
     this.clearCanvas();
   }
 

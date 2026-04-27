@@ -104,7 +104,7 @@
       </ion-item-options>
 
       <ion-item lines="none" (click)="goDetail(item.id)">
-        <div [class]="'project_list ' + item.type" *ngIf="!item.created_at">
+        <div class="project_list" [style.--status-color]="getStatusColor(item.type)" *ngIf="!item.created_at">
           <div class="title">
             <span>{{ 'Area' + item.project.name }}</span>
             <span>{{ item.date_info }}</span>
@@ -113,7 +113,7 @@
           <div class="type"><span>{{ item.type }}</span></div>
         </div>
 
-        <div [class]="'project_list ' + item.type" *ngIf="item.created_at">
+        <div class="project_list" [style.--status-color]="getStatusColor(item.type)" *ngIf="item.created_at">
           <div class="title">
             <span>{{ 'Area: ' + ((!item?.area || item?.area === 'null') ? 'No se indica' : item.area) }}</span>
             <span>{{ item.completed | date:'dd/MM/yyyy hh:mm a' }}</span>

@@ -9,7 +9,8 @@ export interface OfflineGeneral {
     default_password: boolean;
     coronaforms: any;
     covid_records: any[];
-    disciplines: GeneralModel[]
+    disciplines: GeneralModel[];
+    recordStatuses: GeneralModel[];
 }
 export interface Version {
     android: string;
@@ -46,6 +47,10 @@ export interface Record {
 export interface GeneralModel {
     id: number;
     name: string;
+    color?: string;
+    textColor?: string;
+    isActive?: number;
+    flag?: number;
 }
 
 export interface Enterprise {
@@ -57,6 +62,5 @@ export interface Enterprise {
 export interface Project {
     id: number;
     enterpriseId: number;
-
     name: string;
 }

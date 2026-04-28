@@ -85,6 +85,16 @@ export class TarjetaMainPage implements OnInit {
     this.selectedProjectId = this.project?.id ?? this.rs.project_id ?? '';
   }
 
+  getStatusColor(statusName: string | null | undefined): string {
+    const found = Array.isArray(this.rs.recordStatuses)
+      ? this.rs.recordStatuses.find(
+          (x: any) => String(x?.name || '').trim() === String(statusName || '').trim()
+        )
+      : null;
+
+    return found?.color || '#03A60B';
+  }
+
   async ngOnInit() {
     const me = this.us?.user; 
     console.log('Usuario actual en TarjetaMainPage:', me);

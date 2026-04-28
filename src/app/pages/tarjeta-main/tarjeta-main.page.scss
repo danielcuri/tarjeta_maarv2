@@ -222,6 +222,8 @@ ion-content {
                     position: relative;
                     padding-top: 1rem;
                     padding-bottom: 1rem;
+                    border-bottom: 1px solid var(--status-color, #03A60B);
+
                     &::after {
                         position: absolute;
                         content: '';
@@ -230,43 +232,7 @@ ion-content {
                         top: 0;
                         width: 0.5rem;
                         height: 100%;
-                        background: #28e070;
-                    }
-                    &.Seguro {
-                        border-bottom: 1px solid #03A60B;
-                        &::after {
-                            background: #03A60B;
-                        }
-                    }
-                    &.Inseguro {
-                        border-bottom: 1px solid #F24700;
-                        &::after {
-                            background: #F24700;
-                        }
-                    }
-                    &.green {
-                        border-bottom: 1px solid #064;
-                        &::after {
-                            background: #064;
-                        }
-                    }
-                    &.yellow {
-                        border-bottom: 1px solid #CBB30C;
-                        &::after {
-                            background: #CBB30C;
-                        }
-                    }
-                    &.red {
-                        border-bottom: 1px solid #A3201D;
-                        &::after {
-                            background: #A3201D;
-                        }
-                    }
-                    &.gray {
-                        border-bottom: 1px solid #404040;
-                        &::after {
-                            background: #404040;
-                        }
+                        background: var(--status-color, #03A60B);
                     }
                     & .title {
                         display: flex;

@@ -128,16 +128,16 @@
               <ion-radio-group [(ngModel)]="reportData.type">
                   <ion-grid>
                       <ion-row>
-                          <ion-col size="6">
+                          <ion-col size="6" *ngFor="let status of rs.recordStatuses">
                               <ion-item lines="none">
-                                  <ion-label>Seguro</ion-label>
-                                  <ion-radio slot="start" value="Seguro" mode="md" name="type" [disabled]="edit"></ion-radio>
-                              </ion-item>
-                          </ion-col>
-                          <ion-col size="6">
-                              <ion-item lines="none">
-                                  <ion-label>Inseguro</ion-label>
-                                  <ion-radio slot="start" value="Inseguro" mode="md" name="type" [disabled]="edit"></ion-radio>
+                                  <ion-label>{{ status.name }}</ion-label>
+                                  <ion-radio
+                                    slot="start"
+                                    [value]="status.name"
+                                    mode="md"
+                                    name="type"
+                                    [disabled]="edit">
+                                  </ion-radio>
                               </ion-item>
                           </ion-col>
                       </ion-row>

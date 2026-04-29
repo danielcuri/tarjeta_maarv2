@@ -127,6 +127,9 @@ export class RecordPage implements OnInit {
     this.reportData.worker_id_number = this.document;
     await this.rs.loadStorage();
     await this.ensureOfflineData();
+    if (!this.edit && !this.reportData.type) {
+      this.reportData.type = this.getDefaultRecordStatus();
+    }
     this.enterprises = this.rs.enterprises || [];
     this.enterprises = this.rs.enterprises || [];
 
@@ -367,14 +370,24 @@ export class RecordPage implements OnInit {
     }
   }*/
 
+  private getDefaultRecordStatus(): string {
+    const activeStatuses = Array.isArray(this.rs.recordStatuses)
+      ? this.rs.recordStatuses.filter((s: any) => Number(s?.isActive ?? 1) === 1)
+      : [];
+
+    return activeStatuses.length > 0 ? activeStatuses[0].name : '';
+  }
+
   private async ensureOfflineData(): Promise<void> {
     const hasEnterprises =
       Array.isArray(this.rs.enterprises) && this.rs.enterprises.length > 0;
     const hasCategories =
       Array.isArray(this.rs.categories) && this.rs.categories.length > 0;
     const hasRisks = Array.isArray(this.rs.risks) && this.rs.risks.length > 0;
+    const hasRecordStatuses =
+      Array.isArray(this.rs.recordStatuses) && this.rs.recordStatuses.length > 0;
 
-    if (hasEnterprises && hasCategories && hasRisks) return;
+    if (hasEnterprises && hasCategories && hasRisks && hasRecordStatuses) return;
 
     const userId = this.us.user?.id;
     if (!userId) return;
@@ -528,7 +541,7 @@ export class RecordPage implements OnInit {
       : [];
     let c_msg = '';
     if (this.reportData.type == '') {
-      c_msg += 'Debes seleccionar si es seguro o inseguro. ';
+      c_msg += 'Debes seleccionar un estado. ';
     }
     if (!this.selectedEnterpriseId || !this.selectedProjectId) {
       this.alertCtrl.present('Aviso', 'Selecciona la empresa y el proyecto.');
@@ -620,7 +633,7 @@ export class RecordPage implements OnInit {
       projectId: this.selectedProjectId || null,
       project_name: this.project?.name || '',
       categoryId: null,
-      type: '',
+      type: this.getDefaultRecordStatus(),
       area: '',
       completed: momentTz().tz('America/Lima').format('YYYY-MM-DDTHH:mm:ss'),
       risks: [],

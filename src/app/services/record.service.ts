@@ -28,6 +28,7 @@ export class RecordService {
   corona_data: any = {};
   covid_records: any[] = [];
   disciplines: any = [];
+  recordStatuses: any = [];
 
   constructor(
     private query: QueryService,
@@ -46,43 +47,54 @@ export class RecordService {
   }
 
   async ensureOfflineInfo(userId: number): Promise<void> {
-  await this.loadStorage();
+    await this.loadStorage();
 
-  if (!Array.isArray(this.enterprises) || this.enterprises.length === 0) {
+    const hasEnterprises =
+      Array.isArray(this.enterprises) && this.enterprises.length > 0;
+    const hasRecordStatuses =
+      Array.isArray(this.recordStatuses) && this.recordStatuses.length > 0;
+
+    if (hasEnterprises && hasRecordStatuses) {
+      return;
+    }
+
     return new Promise<void>((resolve) => {
       this.getGeneralInformation(userId).subscribe({
         next: (res: any) => {
           const data = res?.data ?? res;
-          if (data) this.saveOfflineData(data); 
+          if (data) this.saveOfflineData(data);
           resolve();
         },
-        error: () => resolve(), 
+        error: () => resolve(),
       });
     });
   }
-}
 
   getFiles(params: any = {}) {
-  const clean = { ...params };
-  if (clean.filter && typeof clean.filter !== 'string') {
-    clean.filter = JSON.stringify(clean.filter);
+    const clean = { ...params };
+    if (clean.filter && typeof clean.filter !== 'string') {
+      clean.filter = JSON.stringify(clean.filter);
+    }
+    if (!clean.limit) clean.limit = 20;
+    if (!clean.sort) clean.sort = 'id';
+    if (!clean.order) clean.order = 'desc';
+    return this.http.get(`${environment.apiUrl}/file`, { params: clean });
   }
-  if (!clean.limit) clean.limit = 20; 
-  if (!clean.sort)  clean.sort  = 'id';
-  if (!clean.order) clean.order = 'desc';
-  return this.http.get(`${environment.apiUrl}/file`, { params: clean });
-}
 
-getFiletypes(params: any = {}) {
-  const clean = { ...params };
-  if (clean.filter && typeof clean.filter !== 'string') {
-    clean.filter = JSON.stringify(clean.filter);
+  getFiletypes(params: any = {}) {
+    const clean = { ...params };
+    if (clean.filter && typeof clean.filter !== 'string') {
+      clean.filter = JSON.stringify(clean.filter);
+    }
+    return this.http.get(`${environment.apiUrl}/filetype`, { params: clean });
   }
-  return this.http.get(`${environment.apiUrl}/filetype`, { params: clean });
-}
 
   getUserFiles(userId: number, params: any = {}) {
-    return this.query.executeQuery<any>('get', `/file/getUserFiles/${userId}`, params);
+    return this.query.executeQuery<any>(
+      'get',
+      `/file/getUserFiles/${userId}`,
+      params
+    );
   }
 
   downloadFileById(id: number) {
@@ -142,6 +154,7 @@ getFiletypes(params: any = {}) {
     this.categories = data.categories;
     this.risks = data.risks;
     this.disciplines = data.disciplines || [];
+    this.recordStatuses = data.recordStatuses || [];
     this.reports = data.records;
     this.covid_records = data.covid_records;
     this.deleted = [];
@@ -179,6 +192,7 @@ getFiletypes(params: any = {}) {
       setPref('risks', this.risks),
       setPref('disciplines', this.disciplines),
       setPref('project_id', this.project_id),
+      setPref('recordStatuses', this.recordStatuses),
       setPref('enterprise_id', this.enterprise_id),
       setPref('reports', this.reports),
       setPref('version', this.version),
@@ -197,6 +211,7 @@ getFiletypes(params: any = {}) {
     this.disciplines = (await getPref('disciplines')) || [];
     this.project_id = (await getPref('project_id', false)) || '';
     this.enterprise_id = (await getPref('enterprise_id', false)) || '';
+    this.recordStatuses = (await getPref('recordStatuses')) || [];
     this.version = (await getPref('version', false)) || '';
     this.reports = (await getPref('reports')) || [];
     this.deleted = (await getPref('deleted')) || [];
